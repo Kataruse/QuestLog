@@ -20,4 +20,4 @@ Double click the "**???**.sln" file to open up the project in Microsoft Visual S
 
 [Nicholas Trahan]()
 
-[William Paxton]()
+[William Paxton](https://github.com/willpaxton)
