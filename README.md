@@ -17,7 +17,9 @@ Double click the "**???**.sln" file to open up the project in Microsoft Visual S
 
 ## Tools & APIs
 [Howlongtobeat API](https://github.com/ckatzorke/howlongtobeat)
+
 [Steam Web API](https://steamcommunity.com/dev)
+
 [three.js](https://threejs.org/docs/index.html#manual/en/introduction/Creating-a-scene)
 
 ## Contributors
