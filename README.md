@@ -1,4 +1,4 @@
-# Game Backlog Web Application - Algorithms Project
+# QuestLog - A Game Backlog Web Application - Algorithms Project
 
 ## Description
 A project assigned to us by Matthew Harrison that must address atleast on of the following learning objectives.
