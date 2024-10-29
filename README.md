@@ -15,9 +15,12 @@ Download the most recent version and extract to file name.
 ## How to use
 Double click the "**???**.sln" file to open up the project in Microsoft Visual Studio, then press the green arrow run button with the text "**???**" following it to run the program.
 
+## Tools & APIs
+[Howlongtobeat API](https://github.com/ckatzorke/howlongtobeat)
+
 ## Contributors
 [Nicholas Crump](https://github.com/Kataruse)
 
-[Nicholas Trahan]()
+[Nicholas Trahan](https://github.com/NicholasTrahan)
 
 [Will Paxton](https://github.com/willpaxton)
