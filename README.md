@@ -1,4 +1,4 @@
-# Algorithms Project
+# Game Backlog Web Application - Algorithms Project
 
 ## Description
 A project assigned to us by Matthew Harrison that must address atleast on of the following learning objectives.
@@ -17,6 +17,8 @@ Double click the "**???**.sln" file to open up the project in Microsoft Visual S
 
 ## Tools & APIs
 [Howlongtobeat API](https://github.com/ckatzorke/howlongtobeat)
+[Steam Web API](https://steamcommunity.com/dev)
+[three.js](https://threejs.org/docs/index.html#manual/en/introduction/Creating-a-scene)
 
 ## Contributors
 [Nicholas Crump](https://github.com/Kataruse)
