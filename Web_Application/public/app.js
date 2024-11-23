@@ -76,6 +76,7 @@ async function displayGameResults(games) {
                     <p><strong>Rating:</strong> ${gameDetails.rating || 'No Rating Available'}</p>
                     <p><strong>Platforms:</strong> ${gameDetails.platforms.length > 0 ? gameDetails.platforms.join(', ') : 'No platforms available'}</p>
                     <p><strong>Genres:</strong> ${gameDetails.genres.length > 0 ? gameDetails.genres.join(', ') : 'No genres available'}</p>
+                    <p><strong>Time to Beat:</strong> ${gameDetails.comp_time_in_secs > 0 ? gameDetails.comp_time_in_secs + ' seconds' : 'No Time Listed'}</p>
                 `;
 
                 // Create the cover image
@@ -133,6 +134,7 @@ async function fetchGameDetails(gameId) {
                 rating: data.rating || 'N/A',
                 platforms: data.platforms,
                 genres: data.genres,
+                comp_time_in_secs: data.comp_time_in_secs || 'N/A', // Ensure comp_time_in_secs is correctly fetched
             };
         } else {
             console.log('No matches found');
