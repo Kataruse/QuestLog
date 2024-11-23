@@ -1,68 +1,227 @@
-/* styles.css */
-
+/* General Styling */
 body {
-    font-family: Arial, sans-serif;
-    padding: 20px;
-    background-color: #f0f0f0;
-}
-
-h1 {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f9f9f9;
     color: #333;
 }
 
-#searchBar {
-    width: 300px;
-    padding: 10px;
-    margin-bottom: 20px;
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    background-color: #fff;
+    border-bottom: 1px solid #ccc;
 }
 
-ul {
-    list-style-type: none;
-    padding: 0;
-}
-
-li {
-    background: #fff;
-    padding: 10px;
-    margin: 10px 0;
-    border-radius: 5px;
+header .logo h1 {
+    font-size: 1.5rem;
     display: flex;
     align-items: center;
 }
 
-li img {
-    margin-left: 10px;
-    width: 50px;
-    height: 50px;
+header nav {
+    display: flex;
+    align-items: center;
+    gap: 15px;
 }
 
-p {
-    margin: 5px 0;
+header .sign-in {
+    background-color: #000;
+    color: #fff;
+    border: none;
+    border-radius: 20px;
+    padding: 5px 15px;
+    cursor: pointer;
 }
 
+.search-bar {
+    display: flex;
+    justify-content: center;
+    margin: 20px auto;
+    width: 50%;
+}
+
+.search-bar input {
+    width: 100%;
+    padding: 10px 15px;
+    border: 2px solid #ccc;
+    border-radius: 20px;
+    font-size: 1rem;
+}
+
+.game-results {
+    margin: 20px auto;
+    max-width: 800px;
+}
+
+/* Game Item Styling */
 .game-item {
-    background-color: #fff;
-    padding: 15px;
-    margin-bottom: 15px;
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    transition: box-shadow 0.3s ease;
-}
-
-.game-item:hover {
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-}
-
-.game-item img {
-    max-width: 150px;
+    background: #fff;
+    border-radius: 10px;
     margin-bottom: 10px;
+    padding: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
+.game-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%; /* Ensure it takes up the full width */
+}
+
+.game-header h3 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.dropdown-arrow {
+    font-size: 1rem;
+    color: #666;
+    transform: rotate(0deg);
+    transition: transform 0.3s;
+    margin-left: auto; /* Pushes the dropdown arrow to the far right */
+}
+
+.dropdown-arrow.open {
+    transform: rotate(180deg);
+}
+
+/* Hidden Details */
+.game-details {
+    display: none;
+    padding: 15px;
+    border-top: 1px solid #eee;
+}
+
+.game-cover img {
+    max-width: 150px;
+    border-radius: 5px;
+}
+
+.add-to-list {
+    background-color: #000;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    padding: 5px 10px;
+    cursor: pointer;
+    font-size: 0.9rem;
+}
+
+/* Style the container for the game item */
+.game-item {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    padding: 10px;
+    margin-bottom: 10px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+/* Hover effect for the game item */
+.game-item:hover {
+    background-color: #f9f9f9;
+}
+
+/* Style for the game title */
 .game-item h3 {
-    margin-top: 0;
+    margin: 0;
+    font-size: 18px;
+    font-weight: bold;
 }
 
-.game-item p {
+/* Style the dropdown button */
+.game-item button {
+    background-color: transparent;
+    border: none;
+    color: #007BFF;
+    font-size: 16px;
+    cursor: pointer;
+    padding: 5px;
+    margin-top: 10px;
+}
+
+/* Hover effect for the dropdown button */
+.game-item button:hover {
+    color: #0056b3;
+    text-decoration: underline;
+}
+
+/* Style for the game details section (initially hidden) */
+.game-details {
+    display: none;  /* Hidden by default */
+    padding: 4px;
+    margin-top: 10px;
+    background-color: #f6f6f6;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    width: 98.7%;
+    text-align: left;
+}
+
+/* Style for the cover art inside the game details section */
+.game-details img {
+    width: 150px;  /* Adjust to the desired size */
+    height: auto;
+    margin-right: 10px;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.game-cover {
+    width: 100%;
+    max-width: 400px;
+    height: auto;
+    border-radius: 5px;
+}
+
+/* Style for the game details (left + right layout) */
+.game-details {
+    display: none;
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 20px; /* Increased padding for more space inside the dropdown */
+    margin-top: 10px;
+    background-color: #f9f9f9; /* Add background for visibility */
+    border-radius: 10px;
+    border: 1px solid #ddd;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Add shadow for better visual */
+    width: 94.5%;
+}
+
+.game-details-left {
+    flex: 1;
+    padding: 20px;
+}
+
+.game-details-right {
+    flex: 0.4;
+    display: flex;
+    justify-content: center; /* Center the image */
+    align-items: center;
+    padding-left: 20px;
+}
+
+/* Style for the Add to List button */
+.game-details button {
+    background-color: #007BFF;
+    color: #fff;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 5px;
+    cursor: pointer;
     font-size: 14px;
-    color: #555;
+}
+
+.game-details button:hover {
+    background-color: #0056b3;
 }

@@ -1,147 +1,135 @@
-const searchInput = document.getElementById('search-bar');
-const gameListDiv = document.getElementById('gameList');
+const searchInput = document.getElementById('search-bar'); // Search bar input
+const gameListDiv = document.getElementById('gameList'); // Container for game results
 
-// Debounce timer
+// Debounce timer to delay search requests
 let debounceTimer;
 
-// Function to handle search input and display games
+// Function to handle search input
 function handleInput() {
-    // Clear the previous debounce timer if the user is still typing
-    clearTimeout(debounceTimer);
+    clearTimeout(debounceTimer); // Clear any existing debounce timers
 
     // Set a new debounce timer
     debounceTimer = setTimeout(() => {
-        const query = searchInput.value;
-        if (!query) return;
+        const query = searchInput.value.trim();
+        if (!query) {
+            gameListDiv.innerHTML = ''; // Clear results if input is empty
+            return;
+        }
 
-        // Fetch game matches from the backend
+        // Send the query to the backend
         fetch(`http://127.0.0.1:8000/search`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ name: query }),
         })
-        .then(response => response.json())
-        .then(data => {
-            if (data.Matches) {
-                displayGameResults(data.Matches);
-            } else {
-                gameListDiv.innerHTML = '<p>No games found.</p>';
-            }
-        })
-        .catch(error => {
-            console.error('Error fetching games:', error);
-            gameListDiv.innerHTML = '<p>Error fetching results. Try again later.</p>';
-        });
-    }, 500); // Wait 500ms after the user stops typing before searching
+            .then(response => response.json())
+            .then(data => {
+                if (data.Matches && data.Matches.length > 0) {
+                    displayGameResults(data.Matches);
+                } else {
+                    gameListDiv.innerHTML = '<p>No games found.</p>';
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching games:', error);
+                gameListDiv.innerHTML = '<p>Error fetching results. Please try again later.</p>';
+            });
+    }, 500); // Debounce delay of 500ms
 }
 
-// Function to display the search results
-async function displayGameResults(games) {
+// Function to display search results
+function displayGameResults(games) {
     gameListDiv.innerHTML = ''; // Clear previous results
-    if (games.length === 0) {
-        gameListDiv.innerHTML = '<p>No games found.</p>';
-        return;
-    }
 
     games.forEach(game => {
         const gameDiv = document.createElement('div');
-        gameDiv.className = 'game-item';
+        gameDiv.classList.add('game-item');
 
-        // Game Name (Clickable)
+        // Game header (title + dropdown arrow)
+        const gameHeader = document.createElement('div');
+        gameHeader.classList.add('game-header');
+
         const gameTitle = document.createElement('h3');
-        gameTitle.innerText = game.name;
-        gameDiv.appendChild(gameTitle);
+        gameTitle.textContent = game.name;
 
-        // Dropdown Button to show game details
-        const detailsButton = document.createElement('button');
-        detailsButton.innerText = 'Show Details';
-        gameDiv.appendChild(detailsButton);
+        const dropdownButton = document.createElement('button');
+        dropdownButton.classList.add('dropdown-arrow');
+        dropdownButton.textContent = '▼';
 
-        // Details Section (Initially Hidden)
-        const detailsDiv = document.createElement('div');
-        detailsDiv.className = 'game-details';
-        detailsDiv.style.display = 'none'; // Initially hidden
+        gameHeader.appendChild(gameTitle);
+        gameHeader.appendChild(dropdownButton);
+        gameDiv.appendChild(gameHeader);
 
-        // Append to the gameDiv
-        gameDiv.appendChild(detailsDiv);
+        // Game details (hidden by default)
+        const gameDetails = document.createElement('div');
+        gameDetails.classList.add('game-details');
+        gameDetails.style.display = 'none'; // Hide details by default
 
-        // Toggle details visibility when button is clicked
-        detailsButton.addEventListener('click', async () => {
-            // Fetch additional details if not already loaded
-            if (detailsDiv.style.display === 'none' || detailsDiv.style.display === '') {
-                const gameDetails = await fetchGameDetails(game.name);  // Fetch game details
+        dropdownButton.addEventListener('click', async () => {
+            if (gameDetails.style.display === 'none') {
+                if (!gameDetails.innerHTML) {
+                    const details = await fetchGameDetails(game.name);
 
-                // Update the details section with the fetched data
-                detailsDiv.innerHTML = `
-                    <p><strong>Rating:</strong> ${gameDetails.rating || 'No Rating Available'}</p>
-                    <p><strong>Platforms:</strong> ${gameDetails.platforms.length > 0 ? gameDetails.platforms.join(', ') : 'No platforms available'}</p>
-                    <p><strong>Genres:</strong> ${gameDetails.genres.length > 0 ? gameDetails.genres.join(', ') : 'No genres available'}</p>
-                    <p><strong>Time to Beat:</strong> ${gameDetails.comp_time_in_secs > 0 ? gameDetails.comp_time_in_secs + ' seconds' : 'No Time Listed'}</p>
-                `;
-
-                // Create the cover image
-                const coverArt = document.createElement('img');
-                coverArt.alt = `${game.name} Cover Art`;
-                coverArt.style.width = '150px';  // Adjust the size
-                if (gameDetails.cover) {
-                    coverArt.src = `https://images.igdb.com/igdb/image/upload/t_cover_big/${gameDetails.cover}.webp`;
-                } else {
-                    coverArt.src = 'https://via.placeholder.com/150';  // Placeholder if no cover
+                    // Populate details only if empty
+                    gameDetails.innerHTML = `
+                        <div class="game-details-left">
+                            <p><strong>Rating:</strong> ${details.rating || 'No Rating Available'}</p>
+                            <p><strong>Platforms:</strong> ${details.platforms.length > 0 ? details.platforms.join(', ') : 'No platforms available'}</p>
+                            <p><strong>Genres:</strong> ${details.genres.length > 0 ? details.genres.join(', ') : 'No genres available'}</p>
+                            <p><strong>Time to Beat:</strong> ${details.comp_time || 'No Time Listed'}</p>
+                        </div>
+                        <div class="game-details-right">
+                            <img src="${details.cover ? `https://images.igdb.com/igdb/image/upload/t_cover_big/${details.cover}.webp` : 'https://via.placeholder.com/150'}" alt="${game.name} Cover" class="game-cover">
+                        </div>
+                    `;
                 }
 
-                detailsDiv.appendChild(coverArt); // Append the cover art image to detailsDiv
-                detailsDiv.style.display = 'block';
-                detailsButton.innerText = 'Hide Details';
+                gameDetails.style.display = 'flex';
+                dropdownButton.textContent = '▲'; // Change arrow direction
             } else {
-                detailsDiv.style.display = 'none';
-                detailsButton.innerText = 'Show Details';
+                gameDetails.style.display = 'none';
+                dropdownButton.textContent = '▼'; // Reset arrow
             }
         });
 
-        // Append the game div to the game list
+        gameDiv.appendChild(gameDetails);
         gameListDiv.appendChild(gameDiv);
     });
 }
 
-// Function to fetch additional game details
-async function fetchGameDetails(gameId) {
+// Function to fetch detailed game information
+async function fetchGameDetails(gameName) {
     try {
         const response = await fetch(`http://127.0.0.1:8000/get-info`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ name: gameId }),
+            body: JSON.stringify({ name: gameName }),
         });
 
-        if (!response.ok) {
-            throw new Error('Failed to fetch game details');
-        }
+        if (!response.ok) throw new Error('Failed to fetch game details');
 
         const data = await response.json();
 
-        console.log('API Response Data:', data);  // Log the full API response
-
-        console.log(data.name);
-        console.log(data.name.length);
-
-        // Check if the API returns valid data
         if (data.name && data.name.length > 0) {
             const gameDetails = data.name[0];
-            console.log('Game Details:', gameDetails);
-            console.log('Game Cover:', data.cover);
-
             return {
                 cover: data.cover,
-                rating: data.rating || 'N/A',
-                platforms: data.platforms,
-                genres: data.genres,
-                comp_time_in_secs: data.comp_time_in_secs || 'N/A', // Ensure comp_time_in_secs is correctly fetched
+                rating: gameDetails.rating || 'N/A',
+                platforms: gameDetails.platforms || [],
+                genres: gameDetails.genres || [],
+                comp_time: gameDetails.comp_time_in_secs
+                    ? `${(gameDetails.comp_time_in_secs / 3600).toFixed(1)} Hours`
+                    : 'N/A',
             };
         } else {
-            console.log('No matches found');
+            console.warn('No matches found for game:', gameName);
             return {};
         }
     } catch (error) {
-        console.error(error);
+        console.error('Error fetching game details:', error);
         return {};
     }
 }
+
+// Attach the event listener to the search input
+searchInput.addEventListener('input', handleInput);
