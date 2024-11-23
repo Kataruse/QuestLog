@@ -1,4 +1,5 @@
 import requests
+import sqlite3
 
 class IGDBClient:
     def __init__(self, client_id, client_secret):
@@ -6,6 +7,8 @@ class IGDBClient:
         self.client_secret = client_secret
         self.access_token = None
         self.token_type = None
+        self.con = sqlite3.connect("Game_API/database.db")
+        self.cur = self.con.cursor()
 
     def refresh_token(self):
         """Refresh and retrieve the access token from the Twitch API."""
@@ -86,18 +89,50 @@ class IGDBClient:
         headers = self._get_headers()
         details = []
 
-        for _id in ids:
-            data = f'fields {fields}; where id = {_id};'
-            response = requests.post(url, headers=headers, data=data)
+        table_name = endpoint[:-1]
 
-            if response.status_code == 200:
-                result = response.json()
-                if endpoint == "covers":
-                    details.append(result[0].get('image_id') if result else None)
+        for _id in ids:
+            sql_statement=f"SELECT {table_name} from {endpoint} WHERE {table_name}_id='{_id}'"
+            print(sql_statement)
+            selection = self.cur.execute(sql_statement)
+            result = selection.fetchall()
+
+            if result == []:
+                data = f'fields {fields}; where id = {_id};'
+                response = requests.post(url, headers=headers, data=data)
+
+                if response.status_code == 200:
+                    result = response.json()
+                    if endpoint == "covers":
+                        details.append(result[0].get('image_id') if result else None)
+                        self.cur.execute(f"""
+                                        INSERT INTO {endpoint} VALUES ({_id}, "{result[0].get('image_id') if result else None}")
+                                        """)
+                        self.con.commit()
+                    else:
+                        details.append(result[0].get('name') if result else None)
+                        print(result[0].get('name'))
+                        print()
+                        self.cur.execute(f"""
+                                        INSERT INTO {endpoint} VALUES ({_id}, "{result[0].get('name') if result else None}")
+                                        """)
+                        self.con.commit()
+
+                    
+
                 else:
-                    details.append(result[0].get('name') if result else None)
-            else:
-                print(f"Error fetching details from {endpoint}: {response.status_code} - {response.text}")
+                    print(f"Error fetching details from {endpoint}: {response.status_code} - {response.text}")
+
+                
+
+
+            else: 
+                details.append(result[0])
+                
+            
+
+
+            
         return details
 
     def get_genres(self, genre_ids):

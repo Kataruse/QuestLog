@@ -5,6 +5,15 @@ from pydantic import BaseModel
 from Game_API.igdbclient import IGDBClient
 from starlette.middleware.cors import CORSMiddleware
 
+import sqlite3
+
+con = sqlite3.connect("database.db")
+
+cur = con.cursor()
+
+
+
+
 app = FastAPI()
 
 app.add_middleware(
