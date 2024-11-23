@@ -16,11 +16,7 @@ Download the most recent version and extract to file name.
 Double click the "**???**.sln" file to open up the project in Microsoft Visual Studio, then press the green arrow run button with the text "**???**" following it to run the program.
 
 ## Tools & APIs
-[Howlongtobeat API](https://github.com/ckatzorke/howlongtobeat)
-
-[Steam Web API](https://steamcommunity.com/dev)
-
-[three.js](https://threejs.org/docs/index.html#manual/en/introduction/Creating-a-scene)
+[IGDB API](https://api-docs.igdb.com/#getting-started)
 
 ## Contributors
 [Nicholas Crump](https://github.com/Kataruse)
