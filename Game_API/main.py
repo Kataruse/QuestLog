@@ -31,9 +31,6 @@ igdb = IGDBClient(client_id, client_secret)
 igdb.refresh_token()
 
 
-
-
-
 @app.get("/")
 async def read_root():
     return {"Hello": "World (v2)"}
@@ -45,10 +42,14 @@ async def get_games():
 
 @app.post("/search")
 async def get_games(request: NameRequest):
-    
-    resp = igdb.get_game_matches(request.name)
-    
-    return {"Matches": resp}
+    # Get search results (only game names) from IGDB
+    search_results = igdb.get_game_matches(request.name)
+    print("Search Results:", search_results)
+
+    # Return only the game names
+    return {"Matches": [{"name": name} for name in search_results]}
+
+
 
 @app.get("/get-info")
 async def get_info():
@@ -108,9 +109,14 @@ async def get_info(request: NameRequest):
         print("Covers: None")
     # https://images.igdb.com/igdb/image/upload/t_cover_big/{cover_id}.webp
 
+    try:
+        rounded_game_rating=round(game_rating,0)
+    except:
+        rounded_game_rating="N/A"
+
     return {"id": game_id,
             "name": game_name,
-            "rating": game_rating,
+            "rating": rounded_game_rating,
             "rating_count": game_rating_count,
             'genres': genres,
             'platforms': platforms,
