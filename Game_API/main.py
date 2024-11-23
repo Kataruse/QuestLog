@@ -1,8 +1,8 @@
-# remember to start this server with  uvicorn main:app --reload --host 0.0.0.0 --port 8000
+# remember to start this server with  uvicorn Game_API.main:app --reload --host 0.0.0.0 --port 8000 from the QuestLog folder
 
 from fastapi import FastAPI
 from pydantic import BaseModel
-from igdbclient import IGDBClient
+from Game_API.igdbclient import IGDBClient
 from starlette.middleware.cors import CORSMiddleware
 
 app = FastAPI()
