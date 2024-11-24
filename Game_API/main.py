@@ -7,7 +7,7 @@ from starlette.middleware.cors import CORSMiddleware
 
 import sqlite3
 
-con = sqlite3.connect("database.db")
+con = sqlite3.connect("Game_API/database.db")
 
 cur = con.cursor()
 
@@ -27,6 +27,17 @@ app.add_middleware(
 class NameRequest(BaseModel):
     name: str
 
+class CreateAccountRequest(BaseModel):
+    username: str
+    password: str
+
+class GetLibraryRequest(BaseModel):
+    username: str
+    password: str
+
+class RegisterGame(BaseModel):
+    user_id: int
+    game_id: int
 
 
 # Replace these with your actual credentials
@@ -131,3 +142,28 @@ async def get_info(request: NameRequest):
             'platforms': platforms,
             'cover': covers[0],
             'comp_time_in_secs': completion_time_in_seconds}
+
+@app.post("/create-account")
+async def create_account(request: CreateAccountRequest):
+    look_for_user = cur.execute(f"SELECT username FROM users WHERE username = '{request.username}'")
+    if look_for_user.fetchone() is None:
+
+        cur.execute(f"""
+                    INSERT INTO users(username, password) VALUES
+                    ("{request.username}", "{request.password}")
+                    """)
+        con.commit()
+        return {"Success": f"Created User {request.username}"}
+    else:
+        print(look_for_user.fetchone())
+        return {"Error": "User Already Exists"}
+
+
+@app.post("/get-library")
+async def get_library(request: GetLibraryRequest):
+    # Looks for the user's ID and the game_id in the libraries table
+    # Formats those as a wonderful little piece of JSON output
+    return {"WIP": "WIP"}
+
+# @app.post("/register-library")
+# async def register-library(request: )
