@@ -1,5 +1,6 @@
 import requests
 import sqlite3
+import ast
 
 class IGDBClient:
     def __init__(self, client_id, client_secret):
@@ -60,14 +61,75 @@ class IGDBClient:
         """Retrieve game information by name."""
         url = 'https://api.igdb.com/v4/games'
         headers = self._get_headers()
-        data = f'fields name, genres, platforms, rating, rating_count, cover; where name ~ "{name}"; limit 1;'
-        
-        response = requests.post(url, headers=headers, data=data)
-        if response.status_code == 200:
-            return response.json()
+
+        game_in_db_resp = self.cur.execute(f"""
+                                            SELECT name FROM games WHERE name="{name}"
+                                            """)
+        game_in_db = game_in_db_resp.fetchone()
+        print(game_in_db)
+
+        if game_in_db is None:
+            data = f'fields name, genres, platforms, rating, rating_count, cover; where name ~ "{name}"; limit 1;'
+            
+            response = requests.post(url, headers=headers, data=data)
+
+            response_json = response.json()
+            print(response_json)
+
+            game_id = response_json[0].get('id')
+            game_cover = response_json[0].get('cover')
+            game_name = response_json[0].get('name')
+            game_rating = response_json[0].get('rating')
+            game_rating_count = response_json[0].get('rating_count')
+            game_genres = response_json[0].get('genres')
+            game_platforms = response_json[0].get('platforms')
+            # where completion time?
+            game_completion_time = self.get_completion_time(game_id)
+            # this returns None
+
+            sql = f"""
+                    INSERT INTO games VALUES ({game_id}, "{game_name}", {game_rating}, {game_rating_count}, "{game_cover}", {game_completion_time}, "{game_genres}", "{game_platforms}")
+                    """
+            
+            print(sql)
+
+            self.cur.execute(sql)
+            self.con.commit()
+
+
+            # process over genre platform lists
+
+            if response.status_code == 200:
+                return response_json
+            else:
+                print(f"Error fetching game info: {response.status_code} - {response.text}")
+                return []
         else:
-            print(f"Error fetching game info: {response.status_code} - {response.text}")
-            return []
+
+            resp = self.cur.execute(f"""
+                                    SELECT gm.id, gm.name, gm.rating, gm.rating_count, cs.cover, gm.genres, gm.platforms, gm.completion_time FROM games gm LEFT OUTER JOIN covers cs ON gm.cover = cs.cover_id WHERE name = "{name}"
+                                    """)
+            # JOINS, USE AN OUTER JOIN
+
+
+            return_game = resp.fetchall()
+            print(f"return_game: {return_game}")
+            print(f"return_id: {return_game[0][0]}")
+            return_object = []
+            return_dict = {
+                'id': return_game[0][0],
+                'name': return_game[0][1],
+                'rating': return_game[0][2],
+                'rating_count': return_game[0][3],
+                'cover': return_game[0][4],
+                'genres': return_game[0][5],
+                'platforms': return_game[0][6],
+                'completion_time': return_game[0][7]
+                
+            }
+            print(return_dict)
+            return_object.append(return_dict)
+            return return_object
 
     def get_completion_time(self, game_id):
         """Retrieve the average completion time for a game."""
@@ -76,12 +138,14 @@ class IGDBClient:
         data = f'fields game_id, normally; where game_id = {game_id};'
         
         response = requests.post(url, headers=headers, data=data)
+        print(game_id)
+        print(f"get_comp_time_code: {response.status_code}")
         if response.status_code == 200:
             result = response.json()
-            return result[0].get('normally') if result else None
+            return result[0].get('normally') if result else 0
         else:
             print(f"Error fetching completion time: {response.status_code} - {response.text}")
-            return None
+            return 0
 
     def get_details(self, endpoint, ids, fields):
         """Fetch details like genres, platforms, or artworks."""
@@ -90,15 +154,31 @@ class IGDBClient:
         details = []
 
         table_name = endpoint[:-1]
+        print(type(ids))
+        if endpoint != "covers":
+            try:
+                ids = ast.literal_eval(ids)
+            except: ids = ids
+        else:
+            tmp = ids
+            ids = [tmp]
+        print(f"ids: {ids}")
+        print(type(ids))
+        print(type(ids[0]))
+        print(ids[0])
+
+        
 
         for _id in ids:
             sql_statement=f"SELECT {table_name} from {endpoint} WHERE {table_name}_id='{_id}'"
             print(sql_statement)
             selection = self.cur.execute(sql_statement)
             result = selection.fetchall()
-
             if result == []:
-                data = f'fields {fields}; where id = {_id};'
+                if endpoint == "covers":
+                    data = f'fields {fields}; where id = "{_id}";'
+                else:
+                    data = f'fields {fields}; where id = {_id};'
                 response = requests.post(url, headers=headers, data=data)
 
                 if response.status_code == 200:
@@ -111,6 +191,8 @@ class IGDBClient:
                         self.con.commit()
                     else:
                         details.append(result[0].get('name') if result else None)
+                        print(result)
+                        print(data)
                         print(result[0].get('name'))
                         print()
                         self.cur.execute(f"""
