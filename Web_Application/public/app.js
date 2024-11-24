@@ -65,9 +65,19 @@ function displayGameResults(games) {
         gameDetails.classList.add('game-details');
         gameDetails.style.display = 'none'; // Hide details by default
 
+        // Event listener for dropdown toggle
         dropdownButton.addEventListener('click', async () => {
-            if (gameDetails.style.display === 'none') {
+            // Check if the game details are already displayed
+            const isVisible = gameDetails.style.display === 'flex';
+
+            if (isVisible) {
+                // Hide the game details if already open
+                gameDetails.style.display = 'none';
+                dropdownButton.textContent = '▼'; // Reset the arrow to down
+            } else {
+                // Show the game details if they are hidden
                 if (!gameDetails.innerHTML) {
+                    // Fetch game details only if they haven't been loaded yet
                     const details = await fetchGameDetails(game.name);
 
                     // Populate details only if empty
@@ -82,19 +92,51 @@ function displayGameResults(games) {
                             <img src="${details.cover ? `https://images.igdb.com/igdb/image/upload/t_cover_big/${details.cover}.webp` : 'https://via.placeholder.com/150'}" alt="${game.name} Cover" class="game-cover">
                         </div>
                     `;
+
+                    // Add the "Add to List" button after loading the details
+                    const addToListButton = document.createElement('button');
+                    addToListButton.classList.add('add-to-list-button');
+                    addToListButton.textContent = 'Add to List';
+
+                    // Add functionality to the "Add to List" button
+                    addToListButton.addEventListener('click', () => {
+                        addGameToDatabase(game);
+                    });
+
+                    // Append the button to the details div
+                    gameDetails.appendChild(addToListButton);
                 }
 
                 gameDetails.style.display = 'flex';
-                dropdownButton.textContent = '▲'; // Change arrow direction
-            } else {
-                gameDetails.style.display = 'none';
-                dropdownButton.textContent = '▼'; // Reset arrow
+                dropdownButton.textContent = '▲'; // Change the arrow to up
             }
         });
 
         gameDiv.appendChild(gameDetails);
         gameListDiv.appendChild(gameDiv);
     });
+}
+
+// Function to add a game to the database
+function addGameToDatabase(game) {
+    fetch(`http://127.0.0.1:8000/add-game`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            name: game.name,
+        }),
+    })
+        .then(response => {
+            if (!response.ok) throw new Error('Failed to add game to the database');
+            return response.json();
+        })
+        .then(data => {
+            alert(`"${game.name}" has been added to your list!`);
+        })
+        .catch(error => {
+            console.error('Error adding game to database:', error);
+            alert('Failed to add game. Please try again.');
+        });
 }
 
 // Function to fetch detailed game information
@@ -114,11 +156,11 @@ async function fetchGameDetails(gameName) {
             const gameDetails = data.name[0];
             return {
                 cover: data.cover,
-                rating: gameDetails.rating || 'N/A',
-                platforms: gameDetails.platforms || [],
-                genres: gameDetails.genres || [],
-                comp_time: gameDetails.comp_time_in_secs
-                    ? `${(gameDetails.comp_time_in_secs / 3600).toFixed(1)} Hours`
+                rating: data.rating || 'N/A',
+                platforms: data.platforms || [],
+                genres: data.genres || [],
+                comp_time: data.comp_time_in_secs
+                    ? `${(data.comp_time_in_secs / 3600).toFixed(1)} Hours`
                     : 'N/A',
             };
         } else {

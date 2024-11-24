@@ -56,6 +56,20 @@ app.get('/search', async (req, res) => {
     }
 });
 
+app.post('/add-game', (req, res) => {
+    const { name } = req.body;
+
+    if (!name) {
+        return res.status(400).json({ error: 'Game name is required' });
+    }
+
+    // Example database interaction (replace with actual DB logic)
+    console.log(`Adding game: ${name}`);
+    
+    // Simulate success
+    res.status(200).json({ message: `${name} added to the database!` });
+});
+
 
 // Start the server
 app.listen(port, () => {
