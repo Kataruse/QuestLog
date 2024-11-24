@@ -61,6 +61,7 @@ class IGDBClient:
         
         response = requests.post(url, headers=headers, data=data)
         if response.status_code == 200:
+            print(response.json())
             return response.json()
         else:
             print(f"Error fetching game info: {response.status_code} - {response.text}")

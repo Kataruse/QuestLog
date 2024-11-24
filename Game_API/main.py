@@ -114,7 +114,7 @@ async def get_info(request: NameRequest):
     except:
         rounded_game_rating="N/A"
 
-    return {"id": game_id,
+    return_json = {"id": game_id,
             "name": game_name,
             "rating": rounded_game_rating,
             "rating_count": game_rating_count,
@@ -122,3 +122,6 @@ async def get_info(request: NameRequest):
             'platforms': platforms,
             'cover': covers[0],
             'comp_time_in_secs': completion_time_in_seconds}
+
+    print(return_json)
+    return return_json
