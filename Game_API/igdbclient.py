@@ -176,19 +176,26 @@ class IGDBClient:
             result = selection.fetchall()
             if result == []:
                 if endpoint == "covers":
-                    data = f'fields {fields}; where id = "{_id}";'
+                    data = f'fields {fields}; where id = {_id[0]};'
                 else:
                     data = f'fields {fields}; where id = {_id};'
                 response = requests.post(url, headers=headers, data=data)
 
                 if response.status_code == 200:
+                    
                     result = response.json()
                     if endpoint == "covers":
                         details.append(result[0].get('image_id') if result else None)
-                        self.cur.execute(f"""
+                        print(f"""
                                         INSERT INTO {endpoint} VALUES ({_id}, "{result[0].get('image_id') if result else None}")
                                         """)
+                        self.cur.execute(f"""
+                                        INSERT INTO {endpoint} VALUES ({_id[0]}, "{result[0].get('image_id') if result else None}")
+                                        """)
                         self.con.commit()
+                        
+                        print(result[0].get('image_id'))
+                        return result[0].get('image_id')
                     else:
                         details.append(result[0].get('name') if result else None)
                         print(result)

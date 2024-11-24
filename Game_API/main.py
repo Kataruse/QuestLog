@@ -122,16 +122,20 @@ async def get_info(request: NameRequest):
         print("Platforms: None")
 
 
+    # cover_ids works if the db is being hit
+    # covers works if the api is being hit
+
     cover_ids = game.get('cover', [])
     if type(cover_ids) is int:
         tmp = cover_ids
         cover_ids = [tmp]
 
-    if cover_ids:
-        covers = igdb.get_covers(cover_ids)
-        print("Covers:", covers)
-    else:
-        print("Covers: None")
+        if cover_ids:
+            print(f"Maincoverids:{cover_ids}")
+            covers = igdb.get_covers(cover_ids)
+            print("Covers:", covers)
+        else:
+            print("Covers: None")
     # https://images.igdb.com/igdb/image/upload/t_cover_big/{cover_id}.webp
 
     try:
@@ -139,11 +143,10 @@ async def get_info(request: NameRequest):
     except:
         rounded_game_rating="N/A"
 
-    try:
-        if covers is None:
-            [""]
-    except:
-        covers = []
+
+    if type(cover_ids) is list:
+        cover_ids = covers
+
 
     return_dict = {"id": game_id,
             "name": game_name,
@@ -151,7 +154,7 @@ async def get_info(request: NameRequest):
             "rating_count": game_rating_count,
             'genres': genres,
             'platforms': platforms,
-            'cover': covers,
+            'cover': cover_ids,
             'comp_time_in_secs': completion_time_in_seconds}
 
     print(return_dict)
