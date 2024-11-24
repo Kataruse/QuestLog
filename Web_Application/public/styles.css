@@ -1,68 +1,149 @@
-/* styles.css */
-
+/* General Styling */
 body {
-    font-family: Arial, sans-serif;
-    padding: 20px;
-    background-color: #f0f0f0;
-}
-
-h1 {
-    color: #333;
-}
-
-#searchBar {
-    width: 300px;
-    padding: 10px;
-    margin-bottom: 20px;
-}
-
-ul {
-    list-style-type: none;
+    font-family: 'Arial', sans-serif;
+    margin: 0;
     padding: 0;
+    background-color: #fefff7;
+    color: #1c1c1cdc;
 }
 
-li {
-    background: #fff;
-    padding: 10px;
-    margin: 10px 0;
-    border-radius: 5px;
+header {
+    display: flex;
+    position: relative;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    background-color: #6a565688;
+background-image: url("https://www.transparenttextures.com/patterns/leather.png");
+/* This is mostly intended for prototyping; please download the pattern and re-host for production environments. Thank you! */
+    z-index: 100;
+}
+
+header .logo h1 {
+    font-size: 1.5rem;
     display: flex;
     align-items: center;
 }
 
-li img {
-    margin-left: 10px;
-    width: 50px;
-    height: 50px;
+header nav {
+    display: flex;
+    align-items: center;
+    gap: 15px;
 }
 
-p {
-    margin: 5px 0;
+.list {
+    height: 25px;
+    width: 65px;
+    background-color: #000;
+    color: #fff;
+    border: none;
+    border-radius: 20px;
 }
 
-.game-item {
+header .sign-in {
+    background-color: #000;
+    color: #fff;
+    border: none;
+    border-radius: 20px;
+    padding: 5px 15px;
+    cursor: pointer;
+}
+
+/* Search Bar */
+.search-bar {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    margin: 20px auto;
+    width: 50%;
+}
+
+.search-bar input {
+    width: 100%;
+    padding: 10px 15px;
     background-color: #fff;
-    padding: 15px;
-    margin-bottom: 15px;
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    transition: box-shadow 0.3s ease;
+    border: 2px solid #ccc;
+    border-radius: 20px;
+    font-size: 1rem;
+    z-index: 10;
 }
 
-.game-item:hover {
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+/* Game Results */
+.game-results {
+    margin: 20px auto;
+    max-width: 800px;
 }
 
-.game-item img {
-    max-width: 150px;
+/* Game Item Styling */
+.game-item {
+    background: #fff;
+    border-radius: 10px;
     margin-bottom: 10px;
+    padding: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
-.game-item h3 {
-    margin-top: 0;
+/* Game Header */
+.game-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
 }
 
-.game-item p {
-    font-size: 14px;
-    color: #555;
+.game-header h3 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.dropdown-arrow {
+    font-size: 1rem;
+    color: #666;
+    transition: transform 0.3s;
+}
+
+/* Dropdown Button */
+.dropdown-arrow.open {
+    transform: rotate(180deg);
+}
+
+/* Game Details */
+.game-details {
+    display: flex;
+    justify-content: flex-start; /* Align items to the left */
+    align-items: center; /* Vertically center the items */
+    margin-bottom: 20px;
+}
+
+.game-details-left {
+    flex: 1;
+}
+
+.game-details-right img {
+    max-width: 150px;
+    border-radius: 10px;
+}
+
+/* Left Section: Add to List Button */
+.add-to-list-button {
+    background-color: #28a745;
+    color: #fff;
+    border: none;
+    padding: 8px 16px;
+    cursor: pointer;
+    border-radius: 5px;
+    margin-bottom: -145px;
+    margin-left: 10px;
+    margin-right: 10px; /* Space between the button and cover f */
+}
+
+.add-to-list-button:hover {
+    background-color: #218838;
+}
+
+.game-details-right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
 }

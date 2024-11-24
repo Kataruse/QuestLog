@@ -1,13 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "dHpdgrOpBCeLuCAYv3X5c4qPEk5rZhjXu4/klXsp3NgEHxWaQDdbMjGb/sZ1ArZ8G7tHJ++REphHLz2COvjOmQ==",
+  "dgSpecHash": "K9+vr8Ilu71cOZ3eFm+kxdoL/BpZUFG1P8QVcHSYPb4q7EXK0xpUD8HSr/F5AFUkwusv+z5TlkOi8TAAxU0cQA==",
   "success": true,
-  "projectFilePath": "C:\\Users\\nicka\\Documents\\Personal\\03_School\\03_Extracurricular Activies\\01_ACM\\07_Applications\\Algorithm Test\\Algorithm Test\\Game_Algorithm\\Algorithm Test.csproj",
-  "expectedPackageFiles": [
-    "C:\\Users\\nicka\\.nuget\\packages\\microsoft.windowsdesktop.app.ref\\6.0.15\\microsoft.windowsdesktop.app.ref.6.0.15.nupkg.sha512",
-    "C:\\Users\\nicka\\.nuget\\packages\\microsoft.netcore.app.ref\\6.0.15\\microsoft.netcore.app.ref.6.0.15.nupkg.sha512",
-    "C:\\Users\\nicka\\.nuget\\packages\\microsoft.aspnetcore.app.ref\\6.0.15\\microsoft.aspnetcore.app.ref.6.0.15.nupkg.sha512",
-    "C:\\Users\\nicka\\.nuget\\packages\\microsoft.netcore.app.host.win-x64\\6.0.15\\microsoft.netcore.app.host.win-x64.6.0.15.nupkg.sha512"
-  ],
+  "projectFilePath": "C:\\Users\\gamem\\Documents\\GitHub\\QuestLog\\Game_Algorithm\\Algorithm Test.csproj",
+  "expectedPackageFiles": [],
   "logs": []
 }

@@ -8,24 +8,19 @@
     "net6.0": []
   },
   "packageFolders": {
-    "C:\\Users\\nicka\\.nuget\\packages\\": {},
-    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
+    "C:\\Users\\gamem\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\nicka\\Documents\\Personal\\03_School\\03_Extracurricular Activies\\01_ACM\\07_Applications\\Algorithm Test\\Algorithm Test\\Game_Algorithm\\Algorithm Test.csproj",
+      "projectUniqueName": "C:\\Users\\gamem\\Documents\\GitHub\\QuestLog\\Game_Algorithm\\Algorithm Test.csproj",
       "projectName": "Algorithm Test",
-      "projectPath": "C:\\Users\\nicka\\Documents\\Personal\\03_School\\03_Extracurricular Activies\\01_ACM\\07_Applications\\Algorithm Test\\Algorithm Test\\Game_Algorithm\\Algorithm Test.csproj",
-      "packagesPath": "C:\\Users\\nicka\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\nicka\\Documents\\Personal\\03_School\\03_Extracurricular Activies\\01_ACM\\07_Applications\\Algorithm Test\\Algorithm Test\\Game_Algorithm\\obj\\",
+      "projectPath": "C:\\Users\\gamem\\Documents\\GitHub\\QuestLog\\Game_Algorithm\\Algorithm Test.csproj",
+      "packagesPath": "C:\\Users\\gamem\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\gamem\\Documents\\GitHub\\QuestLog\\Game_Algorithm\\obj\\",
       "projectStyle": "PackageReference",
-      "fallbackFolders": [
-        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
-      ],
       "configFilePaths": [
-        "C:\\Users\\nicka\\AppData\\Roaming\\NuGet\\NuGet.Config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+        "C:\\Users\\gamem\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
@@ -61,30 +56,12 @@
         ],
         "assetTargetFallback": true,
         "warn": true,
-        "downloadDependencies": [
-          {
-            "name": "Microsoft.AspNetCore.App.Ref",
-            "version": "[6.0.15, 6.0.15]"
-          },
-          {
-            "name": "Microsoft.NETCore.App.Host.win-x64",
-            "version": "[6.0.15, 6.0.15]"
-          },
-          {
-            "name": "Microsoft.NETCore.App.Ref",
-            "version": "[6.0.15, 6.0.15]"
-          },
-          {
-            "name": "Microsoft.WindowsDesktop.App.Ref",
-            "version": "[6.0.15, 6.0.15]"
-          }
-        ],
         "frameworkReferences": {
           "Microsoft.NETCore.App": {
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.202\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.400\\RuntimeIdentifierGraph.json"
       }
     }
   }
