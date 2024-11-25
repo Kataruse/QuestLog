@@ -39,6 +39,10 @@ class RegisterGame(BaseModel):
     user_id: int
     game_name: str
 
+class LogIn(BaseModel):
+    username: str
+    password: str
+
 
 # Replace these with your actual credentials
 client_id = 'chxawvc6ihkixiq1trn5kjenh9cavm'
@@ -49,6 +53,8 @@ igdb = IGDBClient(client_id, client_secret)
 
 # Refresh the access token
 igdb.refresh_token()
+
+
 
 
 @app.get("/")
@@ -235,6 +241,31 @@ async def create_user(request: CreateAccountRequest):
     else: 
         return {"Error": f"User {username} already exists."}
 
+@app.post("/log-in")  # Corrected route
+async def log_in(request: LogIn):
+    username = request.username
+    password = request.password
+
+    # Query the database to check for the username and password
+    results = cur.execute(f"""
+        SELECT id FROM users WHERE username = ? AND password = ?
+    """, (username, password))
+
+    # Try to fetch the user ID
+    user = results.fetchone()
+
+    if user:
+        user_id = user[0]
+        return {
+            "status": "success",
+            "message": "Login successful",
+            "user_id": user_id
+        }
+    else:
+        return {
+            "status": "failure",
+            "message": "Username or password is incorrect"
+        }
 
 @app.post("change-availability")
 async def change_availability():

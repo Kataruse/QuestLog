@@ -22,43 +22,7 @@
 
         <button type="submit">Sign Up</button>
     </form>
-
-    <script>
-        document.getElementById("signup-form").addEventListener("submit", async function(event) {
-            event.preventDefault();
-            
-            const username = document.getElementById("username").value;
-            const email = document.getElementById("email").value;
-            const password = document.getElementById("password").value;
-            const confirmPassword = document.getElementById("confirmPassword").value;
-
-            if (password !== confirmPassword) {
-                alert("Passwords do not match!");
-                return;
-            }
-
-            const response = await fetch('http://127.0.0.1:8000/create-user', {  // Updated URL
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    username,
-                    email,
-                    password,  // Send password as is (it will be hashed on server)
-                    confirmPassword  // Optional, could be omitted if not needed by server
-                })
-            });
-
-            const data = await response.json();
-
-            if (response.ok) {
-                alert("Signup successful!");
-                window.location.href = 'index.html';  // Redirect to index page
-            } else {
-                alert(`Error: ${data.error}`);
-            }
-        });
-    </script>
+    
+    <script src="app.js" defer></script>
 </body>
 </html>

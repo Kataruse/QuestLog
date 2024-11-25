@@ -6,11 +6,6 @@ const cors = require('cors');  // Cross-origin resource sharing (CORS) middlewar
 const app = express();
 const port = 3000;
 
-// Custom in-memory "database" for testing
-const customDB = {
-    users: [],  // Array to hold user objects
-};
-
 // Middleware to parse JSON bodies in POST requests
 app.use(bodyParser.json());
 
@@ -32,32 +27,6 @@ app.post('/signup', async (req, res) => {
     if (!username || !email || !password || password !== confirmPassword) {
         return res.status(400).json({ error: 'Invalid input or passwords do not match' });
     }
-
-    // Check if user already exists in the "database"
-    const userExists = customDB.users.some(user => user.email === email || user.username === username);
-    if (userExists) {
-        return res.status(400).json({ error: 'User already exists' });
-    }
-
-    try {
-        // Hash the password
-        console.log('Hashing password...');  // Add logging to see if it's reached here
-        const hashedPassword = await bcrypt.hash(password, 10);  // This is an async operation
-
-        // Log the hashed password (for debugging purposes)
-        console.log('Hashed Password:', hashedPassword);  // Log the result
-
-        // Save user to the in-memory "database"
-        const newUser = { username, email, password: hashedPassword };
-        customDB.users.push(newUser);  // Store the user object with the hashed password
-
-        console.log('User created:', newUser);  // Check if the user is saved correctly
-
-        res.status(201).json({ message: 'User created successfully!' });
-    } catch (error) {
-        console.error('Error during sign-up:', error);  // Log any error during the hashing
-        res.status(500).json({ error: 'Internal server error' });
-    }
 });
 
 
@@ -68,12 +37,6 @@ app.post('/login', async (req, res) => {
 
     if (!email || !password) {
         return res.status(400).json({ error: 'Email and password are required' });
-    }
-
-    // Find user by email
-    const user = customDB.users.find(user => user.email === email);
-    if (!user) {
-        return res.status(400).json({ error: 'User not found' });
     }
 
     try {
