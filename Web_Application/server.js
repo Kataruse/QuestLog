@@ -16,7 +16,7 @@ app.use(bodyParser.json());
 
 // Enable CORS for the frontend to interact with the backend
 app.use(cors({
-    origin: ['http://localhost:8000', 'http://127.0.0.1:5500'],  // The frontend URL (adjust accordingly)
+    origin: ['http://localhost:8000', 'http://127.0.0.1:5500'],  // Allow these origins for frontend communication
     methods: ['GET', 'POST'],
     allowedHeaders: ['Content-Type'],
 }));
@@ -41,23 +41,26 @@ app.post('/signup', async (req, res) => {
 
     try {
         // Hash the password
-        const hashedPassword = await bcrypt.hash(password, 10);
-        
+        console.log('Hashing password...');  // Add logging to see if it's reached here
+        const hashedPassword = await bcrypt.hash(password, 10);  // This is an async operation
+
         // Log the hashed password (for debugging purposes)
-        console.log('Hashed Password:', hashedPassword);
+        console.log('Hashed Password:', hashedPassword);  // Log the result
 
         // Save user to the in-memory "database"
         const newUser = { username, email, password: hashedPassword };
         customDB.users.push(newUser);  // Store the user object with the hashed password
 
-        console.log('User created:', newUser);
+        console.log('User created:', newUser);  // Check if the user is saved correctly
 
         res.status(201).json({ message: 'User created successfully!' });
     } catch (error) {
-        console.error('Error during sign-up:', error);
+        console.error('Error during sign-up:', error);  // Log any error during the hashing
         res.status(500).json({ error: 'Internal server error' });
     }
 });
+
+
 
 // Example route for user login
 app.post('/login', async (req, res) => {
