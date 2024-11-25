@@ -196,16 +196,16 @@ async def get_info(request: NameRequest):
         
 
 
-@app.post("/get-library")
-async def get_library(request: GetLibraryRequest):
-    # Looks for the user's ID and the game_id in the libraries table
-    # Formats those as a wonderful little piece of JSON output
+# @app.post("/get-library")
+# async def get_library(request: GetLibraryRequest):
+#     # Looks for the user's ID and the game_id in the libraries table
+#     # Formats those as a wonderful little piece of JSON output
 
-    look_for_user = cur.execute(f"SELECT game_id FROM libraries WHERE user_id = {request.user_id}")
-    user_games = look_for_user.fetchall()
-    print(user_games)
+#     look_for_user = cur.execute(f"SELECT game_id FROM libraries WHERE user_id = {request.user_id}")
+#     user_games = look_for_user.fetchall()
+#     print(user_games)
 
-    return {"WIP": "WIP"}
+#     return {"WIP": "WIP"}
 
 @app.post("/register-game")
 async def register_game(request: RegisterGame):
@@ -323,12 +323,13 @@ async def log_in(request: LogIn):
 @app.post("/get-games")
 async def get_games(request: GetGames):
     return {"WIP": "WIP"}
-    user_id = request.user_id
 
-    results = cur.execute(f"""
-                        SELECT 
-                        """)
+    look_for_user = cur.execute(f"SELECT game_id FROM libraries WHERE user_id = {request.user_id}")
 
+    user_games = look_for_user.fetchall()
+
+    print(user_games)
+    
     return {"WIP": "WIP"}
 
 @app.post("/sort-games")
