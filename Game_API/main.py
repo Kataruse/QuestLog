@@ -240,4 +240,12 @@ async def create_user(request: CreateAccountRequest):
 async def change_availability():
     return {"WIP": "WIP"}
 
+@app.post("log-in")
+async def log_in():
+    return {"WIP":"WIP"}
+
+@app.post("get-games")
+async def get_games():
+    return {"WIP": "WIP"}
+
 
