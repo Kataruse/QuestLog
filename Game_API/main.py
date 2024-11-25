@@ -4,6 +4,10 @@ from fastapi import FastAPI
 from pydantic import BaseModel
 from Game_API.igdbclient import IGDBClient
 from starlette.middleware.cors import CORSMiddleware
+import sqlite3
+
+con = sqlite3.connect("Game_API/database.db")
+cur = con.cursor()
 
 app = FastAPI()
 
@@ -18,6 +22,8 @@ app.add_middleware(
 class NameRequest(BaseModel):
     name: str
 
+class RegisterGame(BaseModel):
+    name: str
 
 
 # Replace these with your actual credentials
@@ -122,3 +128,27 @@ async def get_info(request: NameRequest):
             'platforms': platforms,
             'cover': covers[0],
             'comp_time_in_secs': completion_time_in_seconds}
+
+@app.post("/register-game")
+async def register_game(request: RegisterGame):
+    game_name = request
+    resp = await get_info(game_name)
+
+    print('resp is below')
+    print(resp)
+
+    game_id = resp.get('id')
+    game_name = resp.get('name')
+    game_rating = resp.get('rating')
+    game_comptime = resp.get('comp_time_in_secs')
+
+    cur.execute(f"""
+    INSERT INTO registered_games VALUES
+        ({game_id},"{game_name}",{game_rating},{game_comptime})
+    """)
+    
+    con.commit()
+
+    return {"Success": f"Game {game_name} added to library."}
+
+

@@ -3,7 +3,7 @@ import requests
 
 input = "Yakuza 0"
 
-url = "http://127.0.0.1:8000/get-info"  # Update with your API's URL
+url = "http://127.0.0.1:8000/register-game"  # Update with your API's URL
 data = {"name": f"{input}"}
 
 response = requests.post(url, json=data)
