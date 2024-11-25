@@ -14,8 +14,7 @@ header {
     align-items: center;
     padding: 10px 20px;
     background-color: #6a565688;
-background-image: url("https://www.transparenttextures.com/patterns/leather.png");
-/* This is mostly intended for prototyping; please download the pattern and re-host for production environments. Thank you! */
+    background-image: url("https://www.transparenttextures.com/patterns/leather.png");
     z-index: 100;
 }
 
@@ -135,7 +134,7 @@ header .sign-in {
     border-radius: 5px;
     margin-bottom: -145px;
     margin-left: 10px;
-    margin-right: 10px; /* Space between the button and cover f */
+    margin-right: 10px; /* Space between the button and cover */
 }
 
 .add-to-list-button:hover {
@@ -184,16 +183,42 @@ header .sign-in {
     border-radius: 5px;
 }
 
+#login-form .button-container {
+    display: flex;
+    justify-content: space-between; /* Ensures buttons are spaced apart */
+    width: 100%; /* Span full form width */
+    margin-top: 10px; /* Space above buttons */
+}
+
+#login-form a.signup-link {
+    text-decoration: none;
+    color: #fff;
+    background-color: #007bff;
+    padding: 8px 12px; /* Reduced padding for a shorter button */
+    border-radius: 5px;
+    text-align: center;
+    flex: 1;
+    margin-right: 5px;
+    transition: background-color 0.3s; /* Smooth hover transition */
+}
+
+#login-form a.signup-link:hover {
+    background-color: #0056b3; /* Hover color for the sign-up button */
+}
+
 #login-form button {
-    background-color: #000;
+    background-color: #28a745;
     color: #fff;
     border: none;
-    padding: 10px 15px;
+    padding: 8px 12px; /* Reduced padding for a shorter button */
     border-radius: 5px;
     cursor: pointer;
     font-weight: bold;
+    flex: 1;
+    margin-left: 5px;
+    transition: background-color 0.3s; /* Smooth hover transition */
 }
 
 #login-form button:hover {
-    background-color: #333;
+    background-color: #218838;
 }
