@@ -227,41 +227,102 @@ document.addEventListener('DOMContentLoaded', function () {
     const signInButton = document.getElementById("sign-in-button");
     const loginDropdown = document.getElementById("login-dropdown");
 
+    // Update the sign-in button and dropdown based on login status
+    function updateSignInButton() {
+        const storedUsername = localStorage.getItem("username");
+
+        if (storedUsername) {
+            // User is logged in
+            signInButton.textContent = storedUsername; // Show username
+            loginDropdown.innerHTML = ''; // Clear previous content
+
+            // Create logout button
+            const logoutOption = document.createElement("button");
+            logoutOption.textContent = "Log Out";
+            logoutOption.addEventListener("click", logout);
+            logoutOption.classList.add("logout-option");
+
+            loginDropdown.appendChild(logoutOption);
+        } else {
+            // User is not logged in
+            signInButton.textContent = "Sign In"; // Reset button text
+            loginDropdown.innerHTML = `
+                <form id="login-form">
+                    <label for="username">Username:</label>
+                    <input type="text" id="username" name="username" placeholder="Enter your username" required>
+                    <label for="password">Password:</label>
+                    <input type="password" id="password" name="password" placeholder="Enter your password" required>
+                    <button type="submit">Log In</button>
+                </form>
+                <a href="signup.html" class="signup-link">Create an account</a>
+            `;
+
+            // Reattach the login form event listener
+            const loginForm = document.getElementById("login-form");
+            if (loginForm) {
+                loginForm.addEventListener("submit", login);
+            }
+        }
+    }
+
+    // Handle login functionality
+    async function login(event) {
+        event.preventDefault();
+
+        const username = document.getElementById("username").value;
+        const password = document.getElementById("password").value;
+
+        try {
+            const response = await fetch("http://127.0.0.1:8000/log-in", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    username,
+                    password,
+                }),
+            });
+
+            const data = await response.json();
+
+            if (response.ok && data.status === "success") {
+                alert("Login successful!");
+
+                // Store user_id and username in localStorage
+                localStorage.setItem("user_id", data.user_id);
+                localStorage.setItem("username", username);
+
+                // Update the dropdown to show the logout button
+                updateSignInButton();
+                loginDropdown.classList.add("hidden"); // Hide the dropdown
+            } else {
+                alert(`Login failed: ${data.message}`);
+            }
+        } catch (error) {
+            console.error("Error logging in:", error);
+            alert("Login failed. Please try again.");
+        }
+    }
+
+    // Handle logout functionality
+    function logout() {
+        localStorage.removeItem("user_id");
+        localStorage.removeItem("username");
+
+        updateSignInButton(); // Update the UI
+        loginDropdown.classList.add("hidden"); // Hide the dropdown
+        alert("You have been logged out.");
+    }
+
+    // Toggle dropdown visibility on button click
     if (signInButton && loginDropdown) {
-        signInButton.addEventListener('click', () => {
+        signInButton.addEventListener("click", () => {
             loginDropdown.classList.toggle("hidden");
         });
     }
 
-    // Function to update the sign-in button with the username and logout functionality
-    function updateSignInButton() {
-        const storedUsername = localStorage.getItem('username');
-        if (storedUsername) {
-            signInButton.textContent = storedUsername; // Show username instead of "Sign In"
-            signInButton.disabled = false; // Enable the button (in case it's disabled)
+    // Check login status on page load
+    document.addEventListener("DOMContentLoaded", updateSignInButton);
 
-            // Add logout option to the dropdown
-            const logoutOption = document.createElement('div');
-            logoutOption.classList.add('logout-option');
-            logoutOption.textContent = "Log Out";
-            logoutOption.addEventListener('click', logout);
-
-            loginDropdown.appendChild(logoutOption);
-        } else {
-            signInButton.textContent = "Sign In"; // Revert to "Sign In" if no user is logged in
-            signInButton.disabled = false;
-        }
-    }
-
-    // Function to handle logout
-    function logout() {
-        localStorage.removeItem('user_id');
-        localStorage.removeItem('username');
-        updateSignInButton(); // Update the UI after logout
-        loginDropdown.classList.add('hidden'); // Hide the dropdown
-        alert("You have been logged out.");
-    }
-
-    // Check if user is already logged in on page load
-    updateSignInButton();
 });
