@@ -30,22 +30,23 @@ header nav {
     gap: 15px;
 }
 
-.list {
-    height: 25px;
-    width: 65px;
+header .list,
+header .sign-in {
+    font-size: 1rem; /* Increase font size */
+    height: 40px; /* Increase height */
+    width: auto; /* Ensure width adjusts to content */
+    padding: 10px 20px; /* Add more padding for larger size */
     background-color: #000;
     color: #fff;
     border: none;
     border-radius: 20px;
+    cursor: pointer;
+    transition: background-color 0.3s; /* Smooth hover transition */
 }
 
-header .sign-in {
-    background-color: #000;
-    color: #fff;
-    border: none;
-    border-radius: 20px;
-    padding: 5px 15px;
-    cursor: pointer;
+header .list:hover,
+header .sign-in:hover {
+    background-color: #333; /* Slightly lighter background on hover */
 }
 
 /* Search Bar */
@@ -151,7 +152,7 @@ header .sign-in {
 .login-dropdown {
     position: absolute;
     right: 20px;
-    top: 60px;
+    top: 70px; /* Increase the top value to move it further down */
     background: #fff;
     border: 1px solid #ccc;
     border-radius: 8px;
