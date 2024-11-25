@@ -14,8 +14,7 @@ header {
     align-items: center;
     padding: 10px 20px;
     background-color: #6a565688;
-background-image: url("https://www.transparenttextures.com/patterns/leather.png");
-/* This is mostly intended for prototyping; please download the pattern and re-host for production environments. Thank you! */
+    background-image: url("https://www.transparenttextures.com/patterns/leather.png");
     z-index: 100;
 }
 
@@ -31,22 +30,23 @@ header nav {
     gap: 15px;
 }
 
-.list {
-    height: 25px;
-    width: 65px;
+header .list,
+header .sign-in {
+    font-size: 1rem; /* Increase font size */
+    height: 40px; /* Increase height */
+    width: auto; /* Ensure width adjusts to content */
+    padding: 10px 20px; /* Add more padding for larger size */
     background-color: #000;
     color: #fff;
     border: none;
     border-radius: 20px;
+    cursor: pointer;
+    transition: background-color 0.3s; /* Smooth hover transition */
 }
 
-header .sign-in {
-    background-color: #000;
-    color: #fff;
-    border: none;
-    border-radius: 20px;
-    padding: 5px 15px;
-    cursor: pointer;
+header .list:hover,
+header .sign-in:hover {
+    background-color: #333; /* Slightly lighter background on hover */
 }
 
 /* Search Bar */
@@ -135,7 +135,7 @@ header .sign-in {
     border-radius: 5px;
     margin-bottom: -145px;
     margin-left: 10px;
-    margin-right: 10px; /* Space between the button and cover f */
+    margin-right: 10px; /* Space between the button and cover */
 }
 
 .add-to-list-button:hover {
@@ -146,4 +146,80 @@ header .sign-in {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
+}
+
+/* Login Dropdown Styling */
+.login-dropdown {
+    position: absolute;
+    right: 20px;
+    top: 70px; /* Increase the top value to move it further down */
+    background: #fff;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 15px;
+    width: 280px;
+    display: flex;
+    flex-direction: column;
+    z-index: 100;
+}
+
+.login-dropdown.hidden {
+    display: none; /* Initially hidden */
+}
+
+#login-form label {
+    margin-top: 10px;
+    font-size: 0.9rem;
+    color: #333;
+}
+
+#login-form input {
+    width: 90%;
+    margin-top: 5px;
+    margin-right: 10px;
+    margin-bottom: 10px;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+#login-form .button-container {
+    display: flex;
+    justify-content: space-between; /* Ensures buttons are spaced apart */
+    width: 100%; /* Span full form width */
+    margin-top: 10px; /* Space above buttons */
+}
+
+#login-form a.signup-link {
+    text-decoration: none;
+    color: #fff;
+    background-color: #007bff;
+    padding: 8px 12px; /* Reduced padding for a shorter button */
+    border-radius: 5px;
+    text-align: center;
+    flex: 1;
+    margin-right: 5px;
+    transition: background-color 0.3s; /* Smooth hover transition */
+}
+
+#login-form a.signup-link:hover {
+    background-color: #0056b3; /* Hover color for the sign-up button */
+}
+
+#login-form button {
+    background-color: #28a745;
+    color: #fff;
+    border: none;
+    padding: 8px 12px; /* Reduced padding for a shorter button */
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    flex: 1;
+    margin-left: 5px;
+    transition: background-color 0.3s; /* Smooth hover transition */
+}
+
+#login-form button:hover {
+    background-color: #218838;
 }
