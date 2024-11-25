@@ -1,7 +1,7 @@
 import requests
 
 
-input = "Yakuza 0"
+input = "Wii Fit"
 
 url = "http://127.0.0.1:8000/get-info"  # Update with your API's URL
 data = {"name": f"{input}"}
@@ -16,3 +16,10 @@ print(response.json())
 
 # response = requests.post(url, json=data)
 # print(response.json())
+
+
+# url = "http://127.0.0.1:8000/register-library"
+# data = {"user_id": 1, "game_id": 2186}
+
+# crt_acc_req = requests.post(url, json=data)
+# print(crt_acc_req.json())
