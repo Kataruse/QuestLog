@@ -39,6 +39,19 @@ class RegisterGame(BaseModel):
     user_id: int
     game_name: str
 
+class ChangeAvailability(BaseModel):
+    user_id: int
+    availability: int # in hours
+
+class LogIn(BaseModel):
+    username: str
+    password: str
+
+class GetGames(BaseModel):
+    user_id: int
+
+class SortGames(BaseModel):
+    user_id: int
 
 # Replace these with your actual credentials
 client_id = 'chxawvc6ihkixiq1trn5kjenh9cavm'
@@ -162,20 +175,23 @@ async def get_info(request: NameRequest):
 
     return return_dict
 
-@app.post("/create-account")
-async def create_account(request: CreateAccountRequest):
-    look_for_user = cur.execute(f"SELECT username FROM users WHERE username = '{request.username}'")
-    if look_for_user.fetchone() is None:
+# @app.post("/create-account")
+# async def create_account(request: CreateAccountRequest):
+#     look_for_user = cur.execute(f"SELECT username FROM users WHERE username = '{request.username}'")
+#     if look_for_user.fetchone() is None:
 
-        cur.execute(f"""
-                    INSERT INTO users(username, password) VALUES
-                    ("{request.username}", "{request.password}")
-                    """)
-        con.commit()
-        return {"Success": f"Created User {request.username}"}
-    else:
-        print(look_for_user.fetchone())
-        return {"Error": "User Already Exists"}
+#         cur.execute(f"""
+#                     INSERT INTO users(username, password) VALUES
+#                     ("{request.username}", "{request.password}")
+#                     """)
+#         con.commit()
+#         return {"status" :"success",
+#                 "message": f"Created User {request.username}"}
+#     else:
+#         print(look_for_user.fetchone())
+#         return {"status" :"error",
+#                 "message": "User Already Exists"}
+        
 
 
 @app.post("/get-library")
@@ -209,7 +225,8 @@ async def register_game(request: RegisterGame):
     con.commit()
 
 
-    return {"Success": f"Added game {game_name} to user's library."}
+    return {"status": "success",
+            "message": f"Added game {game_name} to user's library."}
 
 @app.post("/create-user")
 async def create_user(request: CreateAccountRequest):
@@ -231,21 +248,57 @@ async def create_user(request: CreateAccountRequest):
                     INSERT INTO users (username, password, email) VALUES ("{username}", "{password}", "{email}")
                     """)
         con.commit()
-        return {"Success": f"User {username} created!"}
+        return {"status" :"success",
+                "message": f"Created user {request.username}"}
     else: 
-        return {"Error": f"User {username} already exists."}
+        return {"status" :"failure",
+                "message": f"User {request.username} already exists"}
 
 
-@app.post("change-availability")
+@app.post("/change-availability")
 async def change_availability():
     return {"WIP": "WIP"}
 
-@app.post("log-in")
-async def log_in():
-    return {"WIP":"WIP"}
+@app.post("/log-in")
+async def log_in(request: LogIn):
+    username = request.username
+    password = request.password
 
-@app.post("get-games")
-async def get_games():
+    results = cur.execute(f"""
+        SELECT id FROM users WHERE (username = "{username}" AND password = "{password}")
+    """)
+
+    try:
+        found_user_id = results.fetchone()[0]
+    except:
+        found_user_id = 0
+        return {'status': 'failure',
+                'message': 'user/password not found'}
+
+    # When I get it more fixed, this would be a good time to retrive the list of games
+    # Just call whatever function is used for that endpoint
+
+    return {"status":"success",
+            "message": "log in successful",
+            "user_id": found_user_id}
+
+@app.post("/get-games")
+async def get_games(request: GetGames):
+    return {"WIP": "WIP"}
+    user_id = request.user_id
+
+    results = cur.execute(f"""
+                        SELECT 
+                        """)
+
     return {"WIP": "WIP"}
 
+@app.post("/sort-games")
+async def sort_games(request: SortGames):
+    user_id = request.user_id
 
+    # Run get_games()
+
+    # Subprocess to Sort
+
+    return {"WIP": "WIP"}

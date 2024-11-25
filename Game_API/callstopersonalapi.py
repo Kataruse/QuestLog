@@ -3,10 +3,9 @@ import requests
 
 input = "Wii Fit"
 
-url = "http://127.0.0.1:8000/create-user"  # Update with your API's URL
-data = {"username": "urmom",
-        "password": "LMFAO",
-        "email": "urmom@etsu.edu"}
+url = "http://127.0.0.1:8000/log-in"  # Update with your API's URL
+data = {"username": "wilki",
+        "password": "thisisnotsecure!"}
 
 response = requests.post(url, json=data)
 print(response.json())
