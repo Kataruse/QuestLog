@@ -1,4 +1,19 @@
 document.addEventListener('DOMContentLoaded', function () {
+    const goToGameListButton = document.getElementById("go-to-game-list-button");
+    if (goToGameListButton) {
+        goToGameListButton.addEventListener('click', function() {
+            // Check if the user is logged in
+            const userId = localStorage.getItem('user_id');
+            if (userId) {
+                // User is logged in, proceed to list page
+                window.location.href = 'list.html';
+            } else {
+                // User is not logged in, show alert
+                alert('You must be logged in to view the game list.');
+            }
+        });
+    }
+
     // Handle signup form submission
     const signupForm = document.getElementById("signup-form");
 
@@ -158,7 +173,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         if (!gameDetails.innerHTML) {
                             const details = await fetchGameDetails(game.name);
 
-                            gameDetails.innerHTML = `
+                            gameDetails.innerHTML = ` 
                                 <div class="game-details-left">
                                     <p><strong>Rating:</strong> ${details.rating || 'No Rating Available'}</p>
                                     <p><strong>Platforms:</strong> ${details.platforms.length > 0 ? details.platforms.join(', ') : 'No platforms available'}</p>
@@ -219,8 +234,16 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // Handle the login dropdown visibility toggle
+    const goToIndexButton = document.getElementById("go-to-index-button");
     const signInButton = document.getElementById("sign-in-button");
     const loginDropdown = document.getElementById("login-dropdown");
+
+    // Go to the index page if the button is clicked
+    if (goToIndexButton) {
+        goToIndexButton.addEventListener('click', function() {
+            window.location.href = 'index.html'; // Navigate to the index page
+        });
+    }
 
     // Update the sign-in button and dropdown based on login status
     function updateSignInButton() {
@@ -237,99 +260,38 @@ document.addEventListener('DOMContentLoaded', function () {
             const logoutButton = document.createElement("button");
             logoutButton.textContent = "Log Out";
             logoutButton.addEventListener("click", logout);
-            logoutButton.classList.add("logout-option");
-
             loginDropdown.appendChild(logoutButton);
         } else {
             // User is not logged in
-            signInButton.textContent = "Sign In"; // Reset button text
-            loginDropdown.innerHTML = `
-                <form id="login-form">
-                    <label for="username">Username:</label>
-                    <input type="text" id="username" name="username" placeholder="Enter your username" required>
-                    <label for="password">Password:</label>
-                    <input type="password" id="password" name="password" placeholder="Enter your password" required>
-                    <button type="submit">Log In</button>
-                </form>
+            signInButton.textContent = "Sign In"; // Default Sign In text
+
+            // Add login form
+            const loginForm = document.createElement('form');
+            loginForm.id = 'login-form';
+
+            loginForm.innerHTML = `
+                <label for="username">Username:</label>
+                <input type="text" id="username" name="username" placeholder="Enter your username" required>
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" placeholder="Enter your password" required>
+                <button type="submit">Log In</button>
                 <a href="signup.html" class="signup-link">Create an account</a>
             `;
 
-            // Reattach the login form event listener
-            const loginForm = document.getElementById("login-form");
-            if (loginForm) {
-                loginForm.addEventListener("submit", login);
-            }
+            loginForm.addEventListener("submit", login);
+            loginDropdown.appendChild(loginForm);
         }
     }
 
-    // Handle login functionality
-    async function login(event) {
-        event.preventDefault();
-
-        const username = document.getElementById("username").value;
-        const password = document.getElementById("password").value;
-
-        try {
-            const response = await fetch("http://127.0.0.1:8000/log-in", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({ username, password }),
-            });
-
-            const data = await response.json();
-
-            if (response.ok && data.status === "success") {
-                // Store user_id and username in localStorage
-                localStorage.setItem("user_id", data.user_id);
-                localStorage.setItem("username", username);
-
-                // Update the dropdown to show the logout button
-                updateSignInButton();
-                loginDropdown.classList.add("hidden"); // Hide the dropdown
-            } else {
-                alert(`Login failed: ${data.message}`);
-            }
-        } catch (error) {
-            console.error("Error logging in:", error);
-            alert("Login failed. Please try again.");
-        }
-    }
-
-    // Handle logout functionality
+    // Handle logout process
     function logout() {
-        localStorage.removeItem("user_id");
-        localStorage.removeItem("username");
-
-        updateSignInButton(); // Update the UI
-        loginDropdown.classList.add("hidden"); // Hide the dropdown
-        location.reload();
+        localStorage.removeItem('user_id');
+        localStorage.removeItem('username');
+        updateSignInButton(); // Update the UI after logout
+        alert('You have logged out.');
+        window.location.href = 'index.html'; // Redirect to home page after logging out
     }
 
-    // Toggle dropdown visibility on button click
-    if (signInButton && loginDropdown) {
-        signInButton.addEventListener("click", (event) => {
-            event.stopPropagation(); // Prevent closing immediately
-            loginDropdown.classList.toggle("hidden");
-        });
-    }
-
-    // Close dropdown when clicking outside
-    document.addEventListener("click", (event) => {
-        if (
-            !loginDropdown.contains(event.target) && // Click outside the dropdown
-            !signInButton.contains(event.target) // Click outside the button
-        ) {
-            loginDropdown.classList.add("hidden"); // Hide the dropdown
-        }
-    });
-
-    // Check login status on page load
-    document.addEventListener("DOMContentLoaded", () => {
-        updateSignInButton(); // Ensure the correct state is loaded on page load
-        // Also make sure the dropdown is hidden on page load if necessary
-        loginDropdown.classList.add("hidden");
-    });
-
+    // Initialize the sign-in button on page load
+    updateSignInButton();
 });

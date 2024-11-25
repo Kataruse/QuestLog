@@ -3,18 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quest Log</title>
+    <title>Game List</title>
     <link rel="stylesheet" href="styles.css">
 </head>
-
-<body>    
+<body>
     <!-- Header -->
     <header>
         <div class="logo">
             <h1>Quest Log <span>📖</span></h1>
         </div>
         <nav>
-            <button id="go-to-game-list-button">Go to Game List</button>
+            <button id="go-to-index-button">Go Home</button>
             <button id="sign-in-button" class="sign-in">Sign In</button>
         </nav>
     </header>
@@ -35,16 +34,12 @@
         </form>
     </div>
 
-    <!-- Search Bar -->
-    <div class="search-bar">
-        <input id="search-bar" type="text" placeholder="Search for a game..." />
+    <!-- Game list content goes here -->
+    <div id="game-list-content">
+        <h2>Welcome to the Game List Page</h2>
+        <!-- This is where the list of games will go or other content -->
     </div>
 
-    <!-- Game Results -->
-    <main id="game-results" class="game-results">
-        <div id="gameList"></div>
-    </main>
-
-    <script src="app.js" defer></script>
+    <script src="app.js"></script>
 </body>
 </html>
