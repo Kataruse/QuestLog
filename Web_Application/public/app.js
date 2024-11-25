@@ -67,20 +67,15 @@ function displayGameResults(games) {
 
         // Event listener for dropdown toggle
         dropdownButton.addEventListener('click', async () => {
-            // Check if the game details are already displayed
             const isVisible = gameDetails.style.display === 'flex';
 
             if (isVisible) {
-                // Hide the game details if already open
                 gameDetails.style.display = 'none';
-                dropdownButton.textContent = '▼'; // Reset the arrow to down
+                dropdownButton.textContent = '▼';
             } else {
-                // Show the game details if they are hidden
                 if (!gameDetails.innerHTML) {
-                    // Fetch game details only if they haven't been loaded yet
                     const details = await fetchGameDetails(game.name);
 
-                    // Populate details only if empty
                     gameDetails.innerHTML = `
                         <div class="game-details-left">
                             <p><strong>Rating:</strong> ${details.rating || 'No Rating Available'}</p>
@@ -93,22 +88,18 @@ function displayGameResults(games) {
                         </div>
                     `;
 
-                    // Add the "Add to List" button after loading the details
                     const addToListButton = document.createElement('button');
                     addToListButton.classList.add('add-to-list-button');
                     addToListButton.textContent = 'Add to List';
-
-                    // Add functionality to the "Add to List" button
                     addToListButton.addEventListener('click', () => {
                         addGameToDatabase(game);
                     });
 
-                    // Append the button to the details div
                     gameDetails.appendChild(addToListButton);
                 }
 
                 gameDetails.style.display = 'flex';
-                dropdownButton.textContent = '▲'; // Change the arrow to up
+                dropdownButton.textContent = '▲';
             }
         });
 
@@ -175,3 +166,46 @@ async function fetchGameDetails(gameName) {
 
 // Attach the event listener to the search input
 searchInput.addEventListener('input', handleInput);
+
+// Toggle Login Dropdown
+const signInButton = document.getElementById('sign-in-button');
+const loginDropdown = document.getElementById('login-dropdown');
+
+// Toggle dropdown visibility on button click
+signInButton.addEventListener('click', () => {
+    loginDropdown.classList.toggle('hidden');
+});
+
+// Close the dropdown when clicking outside
+document.addEventListener('click', (event) => {
+    if (!loginDropdown.contains(event.target) && event.target !== signInButton) {
+        loginDropdown.classList.add('hidden');
+    }
+});
+
+// Handle login form submission
+const loginForm = document.getElementById('login-form');
+loginForm.addEventListener('submit', (event) => {
+    event.preventDefault();
+
+    const username = document.getElementById('username').value;
+    const password = document.getElementById('password').value;
+
+    fetch('http://127.0.0.1:8000/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password }),
+    })
+        .then(response => {
+            if (!response.ok) throw new Error('Login failed');
+            return response.json();
+        })
+        .then(data => {
+            alert('Login successful!');
+            loginDropdown.classList.add('hidden');
+        })
+        .catch(error => {
+            console.error('Error logging in:', error);
+            alert('Login failed. Please try again.');
+        });
+});
