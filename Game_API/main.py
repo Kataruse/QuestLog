@@ -322,15 +322,70 @@ async def log_in(request: LogIn):
 
 @app.post("/get-games")
 async def get_games(request: GetGames):
-    return {"WIP": "WIP"}
+    user_id = request.user_id
 
-    look_for_user = cur.execute(f"SELECT game_id FROM libraries WHERE user_id = {request.user_id}")
+    look_for_user = cur.execute(f"""
+                                SELECT usr.id AS user_id, game.id AS game_id, usr.username, game.name, game.rating, game.rating_count, game.cover, game.genres AS game_genres, game.platforms AS game_platforms, game.completion_time FROM libraries lib INNER JOIN users usr ON lib.user_id = usr.id INNER JOIN games game ON lib.game_id = game.id WHERE usr.id = {user_id};
+                                """)
 
     user_games = look_for_user.fetchall()
 
-    print(user_games)
+    # [(1, 1011, 'wilki', 'Borderlands 2', 83.95323371904513, 1639, '94379', '[5, 12]', '[3, 6, 9, 12, 14, 34, 46, 48, 49, 130]', 202800), (1, 2181, 'wilki', 'Wii Sports', 75.25894294402642, 354, '180734', '[13, 14]', '[5]', 0)]
+
+
+    # output = {"status": "success",
+    #         "data" : {}}
     
-    return {"WIP": "WIP"}
+    # for x in range(0,len(user_games)):
+
+    #     data = user_games[x]
+    #     print(data)
+    #     output["data"][x] = {"user_id": data[0],
+    #                         "game_id": data[1],
+    #                         "username": f"{data[2]}",
+    #                         "game_name": f"{data[3]}",
+    #                         "rating": data[4],
+    #                         "rating_count": data[5],
+    #                         "cover": igdb.get_details('covers', data[6], 'id, image_id'),
+    #                         "genres": igdb.get_details('genres', data[7], 'id, name'),
+    #                         "game_platforms": igdb.get_details('platforms', data[8], 'id, name'),
+    #                         "completion_time": data[9]}
+
+    # get_details(self, endpoint, ids, fields)
+
+
+
+    try:
+        output = {"status": "success",
+                    "data" : {}}
+            
+        for x in range(0,len(user_games)):
+
+            data = user_games[x]
+            print(data)
+            output["data"][int(x)] = {"user_id": data[0],
+                                "game_id": data[1],
+                                "username": f"{data[2]}",
+                                "game_name": f"{data[3]}",
+                                "rating": data[4],
+                                "rating_count": data[5],
+                                "cover": igdb.get_details('covers', data[6], 'id, image_id'),
+                                "genres": igdb.get_details('genres', data[7], 'id, name'),
+                                "game_platforms": igdb.get_details('platforms', data[8], 'id, name'),
+                                "completion_time": data[9]}
+    except:
+        return {"status": "fail"}
+
+    #         # May need to grab the cover ID with the SQL, we'll see
+
+    # except Exception as error:
+    #     print("An exception occurred:", type(error).__name__)
+    #     return {"status": "error"}
+    
+
+    print(user_games)
+
+    return output
 
 @app.post("/sort-games")
 async def sort_games(request: SortGames):
