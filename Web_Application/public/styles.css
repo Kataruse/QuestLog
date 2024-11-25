@@ -1,21 +1,77 @@
 /* General Styling */
 body {
-    font-family: 'Arial', sans-serif;
+    font-family: 'Georgia', serif; /* Set font for the entire body */
     margin: 0;
     padding: 0;
-    background-color: #fefff7;
-    color: #1c1c1cdc;
+    background-color: #f1f1f1; /* Light background for the page */
+    color: #1c1c1cdc; /* Default text color */
 }
 
+/* Apply to only the journal (sign-up) page */
+.journal-page {
+    width: 75%; /* Increased width to make the note bigger */
+    margin: 50px auto;
+    padding: 40px; /* More padding to increase size */
+    background: url('https://www.transparenttextures.com/patterns/paper.png') repeat, linear-gradient(to top, #f7e1b5 0%, #fff7d8 100%);
+    background-blend-mode: multiply; /* Blend the gradient with the texture */
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background-color: #f9f3e6bb; /* Light laminated paper color */
+}
+
+/* Ensure form inputs and buttons are normal */
+input,
+button {
+    font-family: 'Arial', sans-serif; /* Make sure the inputs are not affected by journal styles */
+}
+
+/* Form Styling */
+form {
+    display: flex;
+    flex-direction: column;
+}
+
+label {
+    margin-bottom: 5px;
+    font-size: 1rem;
+}
+
+input {
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+button {
+    padding: 12px 20px;
+    border: none;
+    background-color: #28a745;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+button:hover {
+    background-color: #218838;
+}
+
+/* Header */
 header {
     display: flex;
     position: relative;
     justify-content: space-between;
     align-items: center;
     padding: 10px 20px;
-    background-color: #6a565688;
     background-image: url("https://www.transparenttextures.com/patterns/leather.png");
-    z-index: 100;
+    background-size: auto;
+    background-repeat: repeat;
+    background-position: center;
+    background-color: #82501663;
+    background-blend-mode: overlay;
+    color: #000000b0;
 }
 
 header .logo h1 {
@@ -32,21 +88,20 @@ header nav {
 
 header .list,
 header .sign-in {
-    font-size: 1rem; /* Increase font size */
-    height: 40px; /* Increase height */
-    width: auto; /* Ensure width adjusts to content */
-    padding: 10px 20px; /* Add more padding for larger size */
+    font-size: 1rem;
+    height: 40px;
+    padding: 10px 20px;
     background-color: #000;
     color: #fff;
     border: none;
     border-radius: 20px;
     cursor: pointer;
-    transition: background-color 0.3s; /* Smooth hover transition */
+    transition: background-color 0.3s;
 }
 
 header .list:hover,
 header .sign-in:hover {
-    background-color: #333; /* Slightly lighter background on hover */
+    background-color: #333;
 }
 
 /* Search Bar */
@@ -103,7 +158,6 @@ header .sign-in:hover {
     transition: transform 0.3s;
 }
 
-/* Dropdown Button */
 .dropdown-arrow.open {
     transform: rotate(180deg);
 }
@@ -111,8 +165,8 @@ header .sign-in:hover {
 /* Game Details */
 .game-details {
     display: flex;
-    justify-content: flex-start; /* Align items to the left */
-    align-items: center; /* Vertically center the items */
+    justify-content: flex-start;
+    align-items: center;
     margin-bottom: 20px;
 }
 
@@ -135,7 +189,7 @@ header .sign-in:hover {
     border-radius: 5px;
     margin-bottom: -145px;
     margin-left: 10px;
-    margin-right: 10px; /* Space between the button and cover */
+    margin-right: 10px;
 }
 
 .add-to-list-button:hover {
@@ -152,7 +206,7 @@ header .sign-in:hover {
 .login-dropdown {
     position: absolute;
     right: 20px;
-    top: 70px; /* Increase the top value to move it further down */
+    top: 70px;
     background: #fff;
     border: 1px solid #ccc;
     border-radius: 8px;
@@ -165,7 +219,7 @@ header .sign-in:hover {
 }
 
 .login-dropdown.hidden {
-    display: none; /* Initially hidden */
+    display: none;
 }
 
 #login-form label {
@@ -186,40 +240,59 @@ header .sign-in:hover {
 
 #login-form .button-container {
     display: flex;
-    justify-content: space-between; /* Ensures buttons are spaced apart */
-    width: 100%; /* Span full form width */
-    margin-top: 10px; /* Space above buttons */
+    justify-content: space-between;
+    width: 100%;
+    margin-top: 10px;
 }
 
 #login-form a.signup-link {
     text-decoration: none;
     color: #fff;
     background-color: #007bff;
-    padding: 8px 12px; /* Reduced padding for a shorter button */
+    padding: 8px 12px;
     border-radius: 5px;
     text-align: center;
     flex: 1;
     margin-right: 5px;
-    transition: background-color 0.3s; /* Smooth hover transition */
+    transition: background-color 0.3s;
 }
 
 #login-form a.signup-link:hover {
-    background-color: #0056b3; /* Hover color for the sign-up button */
+    background-color: #0056b3;
 }
 
 #login-form button {
     background-color: #28a745;
     color: #fff;
     border: none;
-    padding: 8px 12px; /* Reduced padding for a shorter button */
+    padding: 8px 12px;
     border-radius: 5px;
     cursor: pointer;
     font-weight: bold;
     flex: 1;
     margin-left: 5px;
-    transition: background-color 0.3s; /* Smooth hover transition */
+    transition: background-color 0.3s;
 }
 
 #login-form button:hover {
     background-color: #218838;
+}
+
+/* Ensure all text (including login & sign-up) uses the same font */
+body,
+label,
+input,
+button,
+h1,
+h2,
+h3,
+p,
+span {
+    font-family: 'Georgia', serif; /* Apply Georgia font across the site */
+}
+
+/* Additional specific styles for the login/signup texts */
+#login-form h2,
+.signup-link {
+    font-family: 'Georgia', serif; /* Ensure login/signup texts use Georgia */
 }
