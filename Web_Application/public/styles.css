@@ -277,3 +277,22 @@ header .sign-in:hover {
 #login-form button:hover {
     background-color: #218838;
 }
+
+/* Ensure all text (including login & sign-up) uses the same font */
+body,
+label,
+input,
+button,
+h1,
+h2,
+h3,
+p,
+span {
+    font-family: 'Georgia', serif; /* Apply Georgia font across the site */
+}
+
+/* Additional specific styles for the login/signup texts */
+#login-form h2,
+.signup-link {
+    font-family: 'Georgia', serif; /* Ensure login/signup texts use Georgia */
+}
