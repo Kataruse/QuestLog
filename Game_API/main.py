@@ -142,6 +142,9 @@ async def register_game(request: RegisterGame):
     game_rating = resp.get('rating')
     game_comptime = resp.get('comp_time_in_secs')
 
+    if game_comptime is None:
+        game_comptime = 0
+
     cur.execute(f"""
     INSERT INTO registered_games VALUES
         ({game_id},"{game_name}",{game_rating},{game_comptime})
@@ -151,4 +154,16 @@ async def register_game(request: RegisterGame):
 
     return {"Success": f"Game {game_name} added to library."}
 
+# This could honestly just be a get request tbh.
+@app.get("/sort-games")
+async def sort_games():
 
+    # select first :D
+
+
+
+
+
+
+
+    return {"WIP": "WIP"}
