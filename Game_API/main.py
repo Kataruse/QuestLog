@@ -30,13 +30,14 @@ class NameRequest(BaseModel):
 class CreateAccountRequest(BaseModel):
     username: str
     password: str
+    email: str
 
 class GetLibraryRequest(BaseModel):
     user_id: str
 
 class RegisterGame(BaseModel):
     user_id: int
-    game_id: int
+    game_name: str
 
 
 # Replace these with your actual credentials
@@ -188,93 +189,55 @@ async def get_library(request: GetLibraryRequest):
 
     return {"WIP": "WIP"}
 
-@app.post("/register-library")
-async def register_library(request: RegisterGame):
+@app.post("/register-game")
+async def register_game(request: RegisterGame):
+
     user_id = request.user_id
-    game_id = request.game_id
+    game_name = request.game_name
 
-    sql = f"SELECT id FROM games WHERE id = {request.game_id}"
-    print(sql)
-    look_for_game = cur.execute(sql)
-    user_games = look_for_game.fetchall()
-    print(user_games)
-    
+    results = cur.execute(f"""
+                        SELECT id FROM games WHERE name = "{game_name}" 
+                        """)
+    game_id = results.fetchone()[0]
 
+    print(game_id)
 
+    cur.execute(f"""
+                INSERT INTO libraries VALUES ({user_id}, {game_id})
+                """)
 
-
-    if user_games == []:
-        game_info = igdb.get_game_info(game_name)
-
-        game = game_info[0]
-        game_id = game.get('id')
-        game_name = game.get('name')
-        game_rating = game.get('rating')
-        game_rating_count = game.get('rating_count')
-        completion_time_in_seconds = igdb.get_completion_time(game_id)
+    con.commit()
 
 
+    return {"Success": f"Added game {game_name} to user's library."}
 
-        cover_ids = game.get('cover', [])
-        if type(cover_ids) is int:
-            tmp = cover_ids
-            cover_ids = [tmp]
+@app.post("/create-user")
+async def create_user(request: CreateAccountRequest):
+    username = request.username
+    password = request.password
+    email = request.email
 
-        if cover_ids:
-            covers = igdb.get_covers(cover_ids)
-            print("Covers:", covers)
-        else:
-            print("Covers: None")
-        cover = cover_ids[0]
+    # check if user exists
+    results = cur.execute(f"""
+                        SELECT username FROM users WHERE username = "{username}"
+                        """)
+    try:
+        found_username = results.fetchone()[0]
+    except:
+        found_username = None
 
-        sql = f"""
-                    INSERT INTO games VALUES
-                    ("{game_id}", "{game_name}", {game_rating}, {game_rating_count}, {cover}, {completion_time_in_seconds})
-                    """
-
-        print(sql)
-
-        cur.execute(sql)
-
-        genre_ids = game.get('genres', [])
-
-        if type(genre_ids) is int:
-            tmp = genre_ids
-            genre_ids = [tmp]
-
-        if genre_ids:
-            genres = igdb.get_genres(genre_ids)
-            print("Genres:", genres)
-        else:
-            print("Genres: None")
-
-        platform_ids = game.get('platforms', [])
-
-        if type(platform_ids) is int:
-            tmp = platform_ids
-            platform_ids = [tmp]
-
-        if platform_ids:
-            platforms = igdb.get_platforms(platform_ids)
-            print("Platforms:", platforms)
-        else:
-            print("Platforms: None")
-
-    # if not:
-        # input into games table
-
-        # input into games/platforms table
-
-        # input into games/genres table
-
-    # create the user association
+    if found_username is None:
+        cur.execute(f"""
+                    INSERT INTO users (username, password, email) VALUES ("{username}", "{password}", "{email}")
+                    """)
+        con.commit()
+        return {"Success": f"User {username} created!"}
+    else: 
+        return {"Error": f"User {username} already exists."}
 
 
-
-
-
-
-
-
-
+@app.post("change-availability")
+async def change_availability():
     return {"WIP": "WIP"}
+
+
