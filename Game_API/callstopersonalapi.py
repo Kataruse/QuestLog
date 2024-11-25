@@ -3,9 +3,9 @@ import requests
 
 input = "Wii Fit"
 
-url = "http://127.0.0.1:8000/log-in"  # Update with your API's URL
-data = {"username": "wilki",
-        "password": "thisisnotsecure!"}
+url = "http://127.0.0.1:8000/change-availability"  # Update with your API's URL
+data = {"user_id": "1",
+        "availability": 15}
 
 response = requests.post(url, json=data)
 print(response.json())

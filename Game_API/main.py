@@ -283,8 +283,19 @@ async def log_in(request: LogIn):
         }
 
 @app.post("/change-availability")
-async def change_availability():
-    return {"WIP": "WIP"}
+async def change_availability(request: ChangeAvailability):
+    user_id = request.user_id
+    availability = request.availability
+
+
+    cur.execute(f"""
+                UPDATE users SET availability = {availability} WHERE id = {user_id}
+                """)
+    con.commit()
+
+    return {"status": "success",
+            "message": "User's availability updated."}
+    
 
 @app.post("/log-in")
 async def log_in(request: LogIn):
