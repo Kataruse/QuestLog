@@ -55,7 +55,9 @@ class GetGames(BaseModel):
     user_id: int
 
 class SortGames(BaseModel):
-    user_id: int
+    user_id: int   
+    availability: int
+    algorithm: int # int representing algorithm
 
 # Replace these with your actual credentials
 client_id = 'chxawvc6ihkixiq1trn5kjenh9cavm'
@@ -327,6 +329,8 @@ async def log_in(request: LogIn):
 @app.post("/get-games")
 async def get_games(request: GetGames):
     user_id = request.user_id
+    
+
 
     look_for_user = cur.execute(f"""
                                 SELECT usr.id AS user_id, game.id AS game_id, usr.username, game.name, game.rating, game.rating_count, game.cover, game.genres AS game_genres, game.platforms AS game_platforms, game.completion_time FROM libraries lib INNER JOIN users usr ON lib.user_id = usr.id INNER JOIN games game ON lib.game_id = game.id WHERE usr.id = {user_id};
@@ -395,15 +399,21 @@ async def get_games(request: GetGames):
 
 @app.post("/sort-games")
 async def sort_games(request: SortGames):
+    availability = request.availability
+    algorithm = request.algorithm
     user_id = request.user_id
 
-    executable_path = "./AlgFinalTestC.exe"
+    executable_path = "C:\\Users\\wpaxt\\Documents\\Projects\\QuestLog\\Game_API"
 
-
+    args = ""
 
     command = [executable_path]
     if args:
         command.extend(args)
+
+    executable_path = ".\\Game_API\\exe\\AlgFinalTestC.exe"
+
+    command = [executable_path]
 
     try:
         # Run the executable and capture the output
@@ -412,15 +422,13 @@ async def sort_games(request: SortGames):
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
             text=True,
-            shell=True  # Needed for some Windows commands
+            shell=False  # Use False for security when passing a list
         )
         
-        # Return the standard output and error
-        return result.stdout, result.stderr
-    except FileNotFoundError:
-        print(f"Executable not found: {executable_path}")
-    except Exception as e:
-        print(f"An error occurred: {e}")
+        print(result.stdout)
+
+    except FileNotFoundError as e:
+        print(f"Error: {e}")
 
     # Run get_games()
 
