@@ -13,7 +13,7 @@
             <h1>Quest Log <span>📖</span></h1>
         </div>
         <nav>
-            <button id="go-to-index-button">Go Home</button>
+            <button id="home-button">Go Home</button>
             <button id="sign-in-button" class="sign-in">Sign In</button>
         </nav>
     </header>
@@ -39,6 +39,31 @@
         <h2>Welcome to the Game List Page</h2>
         <!-- This is where the list of games will go or other content -->
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Check if the user is logged in
+            const storedUsername = localStorage.getItem('username');
+            const signInButton = document.getElementById("sign-in-button");
+            const loginStatus = document.getElementById("login-status");
+        
+            if (storedUsername) {
+                // User is logged in
+                signInButton.textContent = storedUsername;
+                if (loginStatus) {
+                    loginStatus.textContent = `Logged in as ${storedUsername}`;
+                }
+            } else {
+                // User is not logged in
+                if (signInButton) {
+                    signInButton.textContent = "Sign In";
+                }
+                if (loginStatus) {
+                    loginStatus.textContent = "";
+                }
+            }
+        });        
+    </script>
 
     <script src="app.js"></script>
 </body>
