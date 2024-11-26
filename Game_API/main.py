@@ -5,6 +5,10 @@ from pydantic import BaseModel
 from Game_API.igdbclient import IGDBClient
 from starlette.middleware.cors import CORSMiddleware
 
+import subprocess
+
+import json
+
 import sqlite3
 
 con = sqlite3.connect("Game_API/database.db")
@@ -384,12 +388,39 @@ async def get_games(request: GetGames):
     
 
     print(user_games)
+    json_output = json.dumps(output)
+    print(json_output)
+    return json_output
 
-    return output
 
 @app.post("/sort-games")
 async def sort_games(request: SortGames):
     user_id = request.user_id
+
+    executable_path = "./AlgFinalTestC.exe"
+
+
+
+    command = [executable_path]
+    if args:
+        command.extend(args)
+
+    try:
+        # Run the executable and capture the output
+        result = subprocess.run(
+            command,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+            shell=True  # Needed for some Windows commands
+        )
+        
+        # Return the standard output and error
+        return result.stdout, result.stderr
+    except FileNotFoundError:
+        print(f"Executable not found: {executable_path}")
+    except Exception as e:
+        print(f"An error occurred: {e}")
 
     # Run get_games()
 

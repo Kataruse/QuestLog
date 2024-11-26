@@ -3,7 +3,7 @@ import requests
 
 input = "Wii Fit"
 
-url = "http://127.0.0.1:8000/get-games"  # Update with your API's URL
+url = "http://127.0.0.1:8000/sort-games"  # Update with your API's URL
 data = {"user_id": 1}
 
 response = requests.post(url, json=data)
