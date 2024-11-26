@@ -245,6 +245,16 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
+    signInButton.addEventListener('click', () => {
+        // Toggle the 'hidden' class on the dropdown
+        loginDropdown.classList.toggle('hidden');
+    });
+
+    // Toggle dropdown visibility
+    loginDropdownToggle.addEventListener('click', () => {
+        loginDropdownContent.classList.toggle('show');
+    });
+
     // Update the sign-in button and dropdown based on login status
     function updateSignInButton() {
         const storedUsername = localStorage.getItem("username");

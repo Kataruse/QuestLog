@@ -296,3 +296,15 @@ span {
 .signup-link {
     font-family: 'Georgia', serif; /* Ensure login/signup texts use Georgia */
 }
+
+.dropdown-content {
+    display: none; /* Hidden by default */
+    position: absolute;
+    background-color: #f9f9f9;
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+    z-index: 1;
+}
+
+.dropdown-content.show {
+    display: block; /* Make visible when 'show' class is toggled */
+}
