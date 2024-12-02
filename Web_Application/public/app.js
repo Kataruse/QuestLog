@@ -290,133 +290,151 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // ------------- Search and Fetch All Games for List Page ---------------
     if (document.location.pathname.includes("list.html")) {
-        // Fetch games only if on list.html
-        const savedGameListDiv = document.getElementById('saved-game-list');
+    // Fetch games only if on list.html
+    const savedGameListDiv = document.getElementById('saved-game-list');
+    
+    async function fetchAllGames() {
+        const userId = localStorage.getItem('user_id');
         
-        async function fetchAllGames() {
-            const userId = localStorage.getItem('user_id');
-            
-            if (!userId) {
-                savedGameListDiv.innerHTML = '<p>You must be logged in to view your game list.</p>';
-                return;
-            }
-
-            try {
-                const response = await fetch('http://127.0.0.1:8000/get-games', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ user_id: userId })
-                });
-
-                if (!response.ok) {
-                    console.error('Failed to fetch games:', response.status);
-                    savedGameListDiv.innerHTML = '<p>Error fetching games. Please try again later.</p>';
-                    return;
-                }
-
-                const data = await response.json();
-                console.log('Data received:', data); // Log the data received from the server
-
-                // Ensure the data is in the correct format (in case it's a stringified JSON)
-                const parsedData = typeof data === 'string' ? JSON.parse(data) : data;
-                console.log('Parsed Data:', parsedData); // Log parsed data
-
-                if (parsedData && parsedData.data) {
-                    const games = Object.values(parsedData.data); // Convert the object into an array of games
-                    displayGames(games);
-                } else {
-                    savedGameListDiv.innerHTML = '<p>No games found.</p>';
-                }
-            } catch (error) {
-                console.error('Error fetching games:', error);
-                savedGameListDiv.innerHTML = '<p>Error fetching games. Please try again later.</p>';
-            }
+        if (!userId) {
+            savedGameListDiv.innerHTML = '<p>You must be logged in to view your game list.</p>';
+            return;
         }
-        
 
-        function displayGames(games) {
-            savedGameListDiv.innerHTML = ''; // Clear previous content
-        
-            if (games.length === 0) {
-                savedGameListDiv.innerHTML = '<p>No games found.</p>';
-                return;
-            }
-        
-            games.forEach(game => {
-                const gameDiv = document.createElement('div');
-                gameDiv.classList.add('game-item');
-        
-                // Game Title with Dropdown Button
-                const gameTitleDiv = document.createElement('div');
-                gameTitleDiv.classList.add('game-title-container');
-        
-                const gameTitle = document.createElement('h3');
-                gameTitle.textContent = game.game_name; // Use the 'game_name' field
-                gameTitleDiv.appendChild(gameTitle);
-        
-                // Dropdown Button
-                const dropdownButton = document.createElement('button');
-                dropdownButton.textContent = '▼';
-                dropdownButton.classList.add('dropdown-button');
-                gameTitleDiv.appendChild(dropdownButton);
-        
-                gameDiv.appendChild(gameTitleDiv);
-        
-                // Game Details (hidden by default)
-                const gameDetailsDiv = document.createElement('div');
-                gameDetailsDiv.classList.add('game-details');
-                gameDetailsDiv.style.display = 'none'; // Initially hidden
-        
-                // Add rating
-                const gameRating = document.createElement('p');
-                gameRating.textContent = `Rating: ${game.rating ? game.rating.toFixed(2) : 'N/A'} (${game.rating_count || 0} ratings)`;
-                gameDetailsDiv.appendChild(gameRating);
-        
-                // Add cover image if available
-                if (game.cover && game.cover[0]) {
-                    const gameImage = document.createElement('img');
-                    gameImage.src = `https://images.igdb.com/igdb/image/upload/t_cover_big/${game.cover[0]}.jpg`;
-                    gameImage.alt = game.game_name;
-                    gameDetailsDiv.appendChild(gameImage);
-                }
-        
-                // Display genres
-                const genresList = document.createElement('p');
-                genresList.textContent = `Genres: ${game.genres ? game.genres.map(genre => genre[0]).join(', ') : 'N/A'}`;
-                gameDetailsDiv.appendChild(genresList);
-        
-                // Display platforms
-                const platformsList = document.createElement('p');
-                platformsList.textContent = `Platforms: ${game.game_platforms ? game.game_platforms.map(platform => platform[0]).join(', ') : 'N/A'}`;
-                gameDetailsDiv.appendChild(platformsList);
-        
-                // Completion time if available
-                if (game.completion_time && game.completion_time > 0) {
-                    const completionTime = document.createElement('p');
-                    completionTime.textContent = `Completion time: ${game.completion_time} minutes`;
-                    gameDetailsDiv.appendChild(completionTime);
-                }
-        
-                gameDiv.appendChild(gameDetailsDiv);
-                savedGameListDiv.appendChild(gameDiv);
-        
-                // Toggle visibility of game details on button click
-                dropdownButton.addEventListener('click', () => {
-                    if (gameDetailsDiv.style.display === 'none') {
-                        gameDetailsDiv.style.display = 'block';
-                        dropdownButton.textContent = '▲'; // Change to '▲' when expanded
-                    } else {
-                        gameDetailsDiv.style.display = 'none';
-                        dropdownButton.textContent = '▼'; // Change to '▼' when collapsed
-                    }
-                });
+        try {
+            const response = await fetch('http://127.0.0.1:8000/get-games', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ user_id: userId })
             });
-        }
-        
 
-        fetchAllGames(); // Fetch the games when the page loads
+            if (!response.ok) {
+                console.error('Failed to fetch games:', response.status);
+                savedGameListDiv.innerHTML = '<p>Error fetching games. Please try again later.</p>';
+                return;
+            }
+
+            const data = await response.json();
+            console.log('Data received:', data); // Log the data received from the server
+
+            // Ensure the data is in the correct format (in case it's a stringified JSON)
+            const parsedData = typeof data === 'string' ? JSON.parse(data) : data;
+            console.log('Parsed Data:', parsedData); // Log parsed data
+
+            if (parsedData && parsedData.data) {
+                const games = Object.values(parsedData.data); // Convert the object into an array of games
+                displayGames(games);
+            } else {
+                savedGameListDiv.innerHTML = '<p>No games found.</p>';
+            }
+        } catch (error) {
+            console.error('Error fetching games:', error);
+            savedGameListDiv.innerHTML = '<p>Error fetching games. Please try again later.</p>';
+        }
     }
 
+    function displayGames(games) {
+        savedGameListDiv.innerHTML = ''; // Clear previous content
+    
+        if (games.length === 0) {
+            savedGameListDiv.innerHTML = '<p>No games found.</p>';
+            return;
+        }
+    
+        games.forEach(game => {
+            const gameDiv = document.createElement('div');
+            gameDiv.classList.add('game-item');
+        
+            // Game Title with Dropdown Button
+            const gameTitleDiv = document.createElement('div');
+            gameTitleDiv.classList.add('game-title-container');
+    
+            // Game title
+            const gameTitle = document.createElement('h3');
+            gameTitle.textContent = game.game_name; // Use the 'game_name' field
+            gameTitleDiv.appendChild(gameTitle);
+    
+            // Dropdown Button
+            const dropdownButton = document.createElement('button');
+            dropdownButton.textContent = '▼';
+            dropdownButton.classList.add('button');
+            gameTitleDiv.appendChild(dropdownButton);
+    
+            gameDiv.appendChild(gameTitleDiv);
+        
+            // Game Details (hidden by default)
+            const gameDetailsDiv = document.createElement('div');
+            gameDetailsDiv.classList.add('game-details');
+            gameDetailsDiv.style.display = 'none'; // Initially hidden
+        
+            // Add rating
+            const gameRating = document.createElement('p');
+            gameRating.textContent = `Rating: ${game.rating ? game.rating.toFixed(2) : 'N/A'} (${game.rating_count || 0} ratings)`;
+            gameDetailsDiv.appendChild(gameRating);
+        
+            // Add cover image if available
+            if (game.cover && game.cover[0]) {
+                const gameImage = document.createElement('img');
+                gameImage.src = `https://images.igdb.com/igdb/image/upload/t_cover_big/${game.cover[0]}.jpg`;
+                gameImage.alt = game.game_name;
+                gameImage.classList.add('game-image');
+                gameDetailsDiv.appendChild(gameImage);
+            }
+        
+            // Display genres
+            const genresList = document.createElement('p');
+            genresList.textContent = `Genres: ${game.genres ? game.genres.map(genre => genre[0]).join(', ') : 'N/A'}`;
+            gameDetailsDiv.appendChild(genresList);
+        
+            // Display platforms
+            const platformsList = document.createElement('p');
+            platformsList.textContent = `Platforms: ${game.game_platforms ? game.game_platforms.map(platform => platform[0]).join(', ') : 'N/A'}`;
+            gameDetailsDiv.appendChild(platformsList);
+        
+            // Completion time if available
+            if (game.completion_time && game.completion_time > 0) {
+                const completionTime = document.createElement('p');
+                completionTime.textContent = `Completion time: ${(game.completion_time / 3600).toFixed(1)} hours`;
+                gameDetailsDiv.appendChild(completionTime);
+            }
+        
+            // Remove from List Button (Initially hidden)
+            const removeButton = document.createElement('button');
+            removeButton.textContent = 'Remove from List';
+            removeButton.classList.add('button', 'remove-button');
+            removeButton.style.display = 'none'; // Hide initially
+            gameDetailsDiv.appendChild(removeButton); // Append the button to the gameDetailsDiv
+    
+            // Add remove button functionality
+            removeButton.addEventListener('click', () => {
+                // Remove the game from the DOM
+                savedGameListDiv.removeChild(gameDiv);
+                // Optionally, you can also handle removing the game from the game array or database here.
+            });
+    
+            gameDiv.appendChild(gameDetailsDiv);
+            savedGameListDiv.appendChild(gameDiv);
+        
+            // Toggle visibility of game details and remove button on button click
+            dropdownButton.addEventListener('click', () => {
+                if (gameDetailsDiv.style.display === 'none') {
+                    gameDetailsDiv.style.display = 'block';
+                    removeButton.style.display = 'inline-block'; // Show remove button
+                    dropdownButton.textContent = '▲'; // Change to '▲' when expanded
+                } else {
+                    gameDetailsDiv.style.display = 'none';
+                    removeButton.style.display = 'none'; // Hide remove button
+                    dropdownButton.textContent = '▼'; // Change to '▼' when collapsed
+                }
+            });
+        });
+    }
+    
+    
+    
+
+    fetchAllGames(); // Fetch the games when the page loads
+}
 
     // ------------- Update Sign In Button & Dropdown Content ---------------
     function updateSignInButton() {
