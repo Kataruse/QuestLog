@@ -20,6 +20,40 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
+    // ------------- Fetch and Display All Games ---------------
+    const savedGameListDiv = document.getElementById('saved-game-list');
+    fetchAllGames();
+
+    async function fetchAllGames() {
+        try {
+            const response = await fetch('http://127.0.0.1:8000/get-all-games'); // You need to set up this endpoint
+            const data = await response.json();
+
+            if (data && data.games && data.games.length > 0) {
+                displayGames(data.games);
+            } else {
+                savedGameListDiv.innerHTML = '<p>No games found.</p>';
+            }
+        } catch (error) {
+            console.error('Error fetching games:', error);
+            savedGameListDiv.innerHTML = '<p>Error fetching games. Please try again later.</p>';
+        }
+    }
+
+    function displayGames(games) {
+        savedGameListDiv.innerHTML = ''; // Clear any existing content
+
+        games.forEach(game => {
+            const gameDiv = document.createElement('div');
+            gameDiv.classList.add('game-item');
+            const gameTitle = document.createElement('h3');
+            gameTitle.textContent = game.name;
+
+            gameDiv.appendChild(gameTitle);
+            savedGameListDiv.appendChild(gameDiv);
+        });
+    }
+
     // ------------- Logout Function ---------------
     function logout() {
         localStorage.removeItem('user_id');
