@@ -16,8 +16,10 @@ Download the repository and extract.
 From the project root:
 Start the web server:
 `node .\Web_Application\server.js`
+
 Start the web API:
 `uvicorn Game_API.main:app --reload --host 0.0.0.0 --port 8000`
+
 Open the webpage located at: `Web_Application/public/index.html`
 
 
