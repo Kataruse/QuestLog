@@ -1,0 +1,32 @@
+{
+  "status": "success",
+  "availability": 100,
+  "algorithm": 0,
+  "data": {
+    "0": {
+      "user_id": 1,
+      "game_id": 2181,
+      "username": "wilki",
+      "game_name": "Wii Sports",
+      "rating": 75.25894294402642,
+      "rating_count": 0,
+      "cover": [
+        [
+          "co3vge"
+        ]
+      ],
+      "genres": [
+        [
+          "Simulator",
+          "Sport"
+        ]
+      ],
+      "game_platforms": [
+        [
+          "Wii"
+        ]
+      ],
+      "completion_time": 0
+    }
+  }
+}

@@ -473,26 +473,41 @@ async def sort_games(request: SortGames):
     # Write Results to File
 
     data_to_write = json.dumps(games_dict)
-    file_path = os.path.join("Game_API", "exe", "data.json")
+    # Game_Algorithm\bin\publish
+    file_path = os.path.join("Game_Algorithm", "bin", "publish", "UserGameListData.json")
     # Open the file in write mode ('w') and write the data
     try:
         with open(file_path, "w") as file:
             file.write(data_to_write)
     except FileNotFoundError:
-        print("The folder 'exe' does not exist.")
+        print("The folder does not exist.")
     except PermissionError:
         print("Permission denied: Unable to write to the file.")
     except Exception as e:
         print(f"An unexpected error occurred: {e}")
         print("Data written to file successfully.")
 
+    
+
 
 
 
     # Subprocess to Sort
+    try:
+        ans = subprocess.check_output(["Game_Algorithm/bin/publish/Algorithm Test.exe"], text=True)
+        print(ans)
+
+    except subprocess.CalledProcessError as e:
+        print(f"Command failed with return code {e.returncode}")
 
     # Get return value from file
+    try:
+        with open(file_path, "r") as file:
+            return_data = file.read()
+    except Exception as e:
+        print(f"An unexpected error occurred: {e}")
+        print("Data written to file successfully.")
 
     # 
 
-    return {"WIP": "WIP"}
+    return return_data
