@@ -1,75 +1,63 @@
-// Run cd Downloads/ProjectWebsite/ProjectWebsite
-// node server.js
-
 const express = require('express');
-const fetch = require('node-fetch');
-const cors = require('cors');
-const bodyParser = require('body-parser');  // Make sure body-parser is imported
+const bcrypt = require('bcrypt');  // Hashing library
+const bodyParser = require('body-parser');  // For parsing incoming request bodies
+const cors = require('cors');  // Cross-origin resource sharing (CORS) middleware
 
 const app = express();
 const port = 3000;
 
-// Enable CORS for the FastAPI backend's address
+// Middleware to parse JSON bodies in POST requests
+app.use(bodyParser.json());
+
+// Enable CORS for the frontend to interact with the backend
 app.use(cors({
-    origin: "http://localhost:8000",  // Frontend origin
-    methods: ["GET", "POST"],
-    allowedHeaders: ["Content-Type"],  // Add any headers you might use
+    origin: ['http://localhost:8000', 'http://127.0.0.1:5500'],  // Allow these origins for frontend communication
+    methods: ['GET', 'POST'],
+    allowedHeaders: ['Content-Type'],
 }));
 
-// Serve static files like HTML, CSS, and JS
+// Serve static files (like HTML, CSS, JS)
 app.use(express.static('public'));
 
-// API route to handle search requests
-app.get('/search', async (req, res) => {
-    const query = req.body.query || '';  // Get the query parameter from body
-    console.log('Received query: ', query); // Log the query
+// Example route for user signup
+app.post('/signup', async (req, res) => {
+    const { username, email, password, confirmPassword } = req.body;
+
+    // Validate input
+    if (!username || !email || !password || password !== confirmPassword) {
+        return res.status(400).json({ error: 'Invalid input or passwords do not match' });
+    }
+});
+
+
+
+// Example route for user login
+app.post('/login', async (req, res) => {
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+        return res.status(400).json({ error: 'Email and password are required' });
+    }
 
     try {
-        const response = await fetch('http://localhost:8000/search', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ name: query })  // Correctly forward the name field
-        });
-
-        if (!response.ok) {
-            const errorBody = await response.text();
-            console.error('Error Response Body: ', errorBody);
-            throw new Error(`Failed to fetch data from FastAPI. Status: ${response.status}. Response: ${errorBody}`);
+        // Compare the provided password with the stored (hashed) password
+        const match = await bcrypt.compare(password, user.password);
+        if (!match) {
+            return res.status(400).json({ error: 'Invalid credentials' });
         }
 
-        const data = await response.json();
-        console.log('Fetched Data: ', data);
-
-        if (Array.isArray(data)) {
-            // Fetch detailed game information for the first match
-            const gameInfo = await fetchDetailedGameInfo(data[0]); // Assuming the first match is the right one
-            res.json(data);
-        } else {
-            res.json([]);  // Return an empty array if no results
-        }
-
+        // Success, return a success message (could also return a JWT token here)
+        res.status(200).json({ message: 'Login successful!' });
     } catch (error) {
-        console.error('Error fetching games: ', error);
-        res.status(500).json({ error: error.message });
+        console.error('Error during login:', error);
+        res.status(500).json({ error: 'Internal server error' });
     }
 });
 
-app.post('/add-game', (req, res) => {
-    const { name } = req.body;
-
-    if (!name) {
-        return res.status(400).json({ error: 'Game name is required' });
-    }
-
-    // Example database interaction (replace with actual DB logic)
-    console.log(`Adding game: ${name}`);
-    
-    // Simulate success
-    res.status(200).json({ message: `${name} added to the database!` });
+// A test route to check if the server is working
+app.get('/', (req, res) => {
+    res.send('Welcome to the API!');
 });
-
 
 // Start the server
 app.listen(port, () => {
