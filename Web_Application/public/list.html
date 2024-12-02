@@ -19,54 +19,15 @@
     </header>
 
     <!-- Login Dropdown -->
-    <div id="login-dropdown" class="login-dropdown hidden">
-        <form id="login-form">
-            <label for="username">Username:</label>
-            <input type="text" id="username" name="username" placeholder="Enter your username" required>
-            <label for="password">Password:</label>
-            <input type="password" id="password" name="password" placeholder="Enter your password" required>
-            
-            <!-- Buttons container -->
-            <div class="button-container">
-                <a href="signup.html" class="signup-link">Create an Account</a>
-                <button type="submit" class="login-button">Log In</button>
-            </div>
-        </form>
-    </div>
+    <div id="login-dropdown" class="login-dropdown hidden"></div> <!-- Dynamically populated -->
 
-   
     <!-- Game List Content -->
     <div id="game-list-content">
         <h2>Game List</h2>
         <div id="saved-game-list"></div> <!-- This is where the games will appear -->
     </div>
 
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            // Check if the user is logged in
-            const storedUsername = localStorage.getItem('username');
-            const signInButton = document.getElementById("sign-in-button");
-            const loginStatus = document.getElementById("login-status");
-        
-            if (storedUsername) {
-                // User is logged in
-                signInButton.textContent = storedUsername;
-                if (loginStatus) {
-                    loginStatus.textContent = `Logged in as ${storedUsername}`;
-                }
-            } else {
-                // User is not logged in
-                if (signInButton) {
-                    signInButton.textContent = "Sign In";
-                }
-                if (loginStatus) {
-                    loginStatus.textContent = "";
-                }
-            }
-        });        
-    </script>
-
-    <script src="app.js"></script>
+    <!-- Load app.js -->
+    <script src="app.js"></script> <!-- This will handle all the functionality -->
 </body>
 </html>

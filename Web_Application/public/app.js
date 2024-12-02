@@ -22,14 +22,14 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // ------------- Fetch and Display All Games ---------------
     const savedGameListDiv = document.getElementById('saved-game-list');
-    fetchAllGames();
 
     async function fetchAllGames() {
         try {
-            const response = await fetch('http://127.0.0.1:8000/get-all-games'); // You need to set up this endpoint
+            const response = await fetch('http://127.0.0.1:8000/get-games'); // You need to set up this endpoint
             const data = await response.json();
 
             if (data && data.games && data.games.length > 0) {
+                console.log('Games found:', data.games);
                 displayGames(data.games);
             } else {
                 savedGameListDiv.innerHTML = '<p>No games found.</p>';
@@ -41,7 +41,8 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function displayGames(games) {
-        savedGameListDiv.innerHTML = ''; // Clear any existing content
+        const savedGameListDiv = document.getElementById('saved-game-list');
+    savedGameListDiv.innerHTML = ''; // Clear any existing content
 
         games.forEach(game => {
             const gameDiv = document.createElement('div');
@@ -286,6 +287,106 @@ document.addEventListener('DOMContentLoaded', function () {
     signInButton.addEventListener('click', function () {
         loginDropdown.classList.toggle('hidden');
     });
+
+    // ------------- Search and Fetch All Games for List Page ---------------
+    if (document.location.pathname.includes("list.html")) {
+        // Fetch games only if on list.html
+        const savedGameListDiv = document.getElementById('saved-game-list');
+        
+        async function fetchAllGames() {
+            const userId = localStorage.getItem('user_id');
+            
+            if (!userId) {
+                savedGameListDiv.innerHTML = '<p>You must be logged in to view your game list.</p>';
+                return;
+            }
+
+            try {
+                const response = await fetch('http://127.0.0.1:8000/get-games', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ user_id: userId })
+                });
+
+                if (!response.ok) {
+                    console.error('Failed to fetch games:', response.status);
+                    savedGameListDiv.innerHTML = '<p>Error fetching games. Please try again later.</p>';
+                    return;
+                }
+
+                const data = await response.json();
+                console.log('Data received:', data); // Log the data received from the server
+
+                // Ensure the data is in the correct format (in case it's a stringified JSON)
+                const parsedData = typeof data === 'string' ? JSON.parse(data) : data;
+                console.log('Parsed Data:', parsedData); // Log parsed data
+
+                if (parsedData && parsedData.data) {
+                    const games = Object.values(parsedData.data); // Convert the object into an array of games
+                    displayGames(games);
+                } else {
+                    savedGameListDiv.innerHTML = '<p>No games found.</p>';
+                }
+            } catch (error) {
+                console.error('Error fetching games:', error);
+                savedGameListDiv.innerHTML = '<p>Error fetching games. Please try again later.</p>';
+            }
+        }
+        
+
+        function displayGames(games) {
+            savedGameListDiv.innerHTML = ''; // Clear previous content
+
+            if (games.length === 0) {
+                savedGameListDiv.innerHTML = '<p>No games found.</p>';
+                return;
+            }
+
+            games.forEach(game => {
+                const gameDiv = document.createElement('div');
+                gameDiv.classList.add('game-item');
+
+                const gameTitle = document.createElement('h3');
+                gameTitle.textContent = game.game_name; // Use the 'game_name' field
+                gameDiv.appendChild(gameTitle);
+
+                // Add rating
+                const gameRating = document.createElement('p');
+                gameRating.textContent = `Rating: ${game.rating ? game.rating.toFixed(2) : 'N/A'} (${game.rating_count || 0} ratings)`;
+                gameDiv.appendChild(gameRating);
+
+                // Add cover image if available
+                if (game.cover && game.cover[0]) {
+                    const gameImage = document.createElement('img');
+                    gameImage.src = `https://images.igdb.com/igdb/image/upload/t_cover_big/${game.cover[0]}.jpg`;
+                    gameImage.alt = game.game_name;
+                    gameDiv.appendChild(gameImage);
+                }
+
+                // Display genres
+                const genresList = document.createElement('p');
+                genresList.textContent = `Genres: ${game.genres ? game.genres.map(genre => genre[0]).join(', ') : 'N/A'}`;
+                gameDiv.appendChild(genresList);
+
+                // Display platforms
+                const platformsList = document.createElement('p');
+                platformsList.textContent = `Platforms: ${game.game_platforms ? game.game_platforms.map(platform => platform[0]).join(', ') : 'N/A'}`;
+                gameDiv.appendChild(platformsList);
+
+                // Completion time if available
+                if (game.completion_time && game.completion_time > 0) {
+                    const completionTime = document.createElement('p');
+                    completionTime.textContent = `Completion time: ${game.completion_time} minutes`;
+                    gameDiv.appendChild(completionTime);
+                }
+
+                savedGameListDiv.appendChild(gameDiv);
+            });
+        }
+
+        fetchAllGames(); // Fetch the games when the page loads
+    }
+
 
     // ------------- Update Sign In Button & Dropdown Content ---------------
     function updateSignInButton() {

@@ -127,6 +127,10 @@ header .sign-in:hover {
 .game-results {
     margin: 20px auto;
     max-width: 800px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    padding: 20px;
 }
 
 /* Game Item Styling */
@@ -134,8 +138,31 @@ header .sign-in:hover {
     background: #fff;
     border-radius: 10px;
     margin-bottom: 10px;
-    padding: 10px;
+    padding: 15px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* Game Title */
+.game-item h3 {
+    font-size: 1.25rem;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+/* Game Description or Other Details */
+.game-item p {
+    font-size: 1rem;
+    color: #666;
+}
+
+/* You can also add more styles here for specific elements like images, ratings, etc. */
+.game-item img {
+    max-width: 100%;
+    border-radius: 8px;
+    margin-top: 10px;
 }
 
 /* Game Header */
