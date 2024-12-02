@@ -29,7 +29,38 @@ document.addEventListener('DOMContentLoaded', function () {
             const data = await response.json();
 
             if (data && data.games && data.games.length > 0) {
-                console.log('Games found:', data.games);
+                displayGames(data.games);
+            } else {
+                savedGameListDiv.innerHTML = '<p>No games found.</p>';
+            }
+        } catch (error) {
+            console.error('Error fetching games:', error);
+            savedGameListDiv.innerHTML = '<p>Error fetching games. Please try again later.</p>';
+        }
+    }
+
+    async function algoOneGames() {
+        try {
+            const response = await fetch('http://127.0.0.1:8000/get-games'); // You need to set up this endpoint
+            const data = await response.json();
+
+            if (data && data.games && data.games.length > 0) {
+                displayGames(data.games);
+            } else {
+                savedGameListDiv.innerHTML = '<p>No games found.</p>';
+            }
+        } catch (error) {
+            console.error('Error fetching games:', error);
+            savedGameListDiv.innerHTML = '<p>Error fetching games. Please try again later.</p>';
+        }
+    }
+
+    async function algoTwoGames() {
+        try {
+            const response = await fetch('http://127.0.0.1:8000/get-games'); // You need to set up this endpoint
+            const data = await response.json();
+
+            if (data && data.games && data.games.length > 0) {
                 displayGames(data.games);
             } else {
                 savedGameListDiv.innerHTML = '<p>No games found.</p>';
@@ -314,11 +345,9 @@ document.addEventListener('DOMContentLoaded', function () {
             }
 
             const data = await response.json();
-            console.log('Data received:', data); // Log the data received from the server
 
             // Ensure the data is in the correct format (in case it's a stringified JSON)
             const parsedData = typeof data === 'string' ? JSON.parse(data) : data;
-            console.log('Parsed Data:', parsedData); // Log parsed data
 
             if (parsedData && parsedData.data) {
                 const games = Object.values(parsedData.data); // Convert the object into an array of games
@@ -332,13 +361,14 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    const applyTimeFilterButton = document.getElementById('apply-time-filter');
+    const algorithmOneButton = document.getElementById('apply-time-filter');
+    const algorithmTwoButton = document.getElementById('apply-time-filter');
     const completionTimeFilterInput = document.getElementById('completion-time-filter');
     const savedGameListDiv = document.getElementById('saved-game-list');
 
     // ------------- Apply Completion Time Filter ---------------
-    if (applyTimeFilterButton) {
-        applyTimeFilterButton.addEventListener('click', function () {
+    if (algorithmOneButton) {
+        algorithmOneButton.addEventListener('click', function () {
             const timeFilter = parseFloat(completionTimeFilterInput.value);
             if (isNaN(timeFilter) || timeFilter <= 0) {
                 alert('Please enter a valid completion time.');
@@ -346,7 +376,22 @@ document.addEventListener('DOMContentLoaded', function () {
             }
 
             // Pass the time filter to the backend to get filtered games
-            fetchFilteredGames(timeFilter);
+            displayGames(algoOneGames());
+        });
+    }
+
+    if (algorithmTwoButton) {
+        algorithmTwoButton.addEventListener('click', function () {
+            const timeFilter = parseFloat(completionTimeFilterInput.value);
+            if (isNaN(timeFilter) || timeFilter <= 0) {
+                alert('Please enter a valid completion time.');
+                return;
+            }
+
+            // Pass the time filter to the backend to get filtered games
+            displayGames(algoTwoGames());
+
+
         });
     }
 
