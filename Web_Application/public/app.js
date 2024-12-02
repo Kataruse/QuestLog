@@ -250,6 +250,36 @@ document.addEventListener('DOMContentLoaded', function () {
         searchInput.addEventListener('input', handleInput);
     }
 
+    // ------------- Add game to List ---------------
+    function addGameToDatabase(game) {
+        const userId = localStorage.getItem('user_id');
+        if (!userId) {
+            alert('You must be logged in to add games to your list.');
+            return;
+        }
+    
+        fetch('http://127.0.0.1:8000/register-game', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                user_id: userId,
+                game_name: game.name
+            })
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    alert(`Game "${game.name}" added to your list!`);
+                } else {
+                    alert(`Failed to add game: ${data.message}`);
+                }
+            })
+            .catch(error => {
+                console.error('Error adding game:', error);
+                alert('An error occurred while adding the game to your list.');
+            });
+    }
+
     // ------------- Sign In Button & Dropdown ---------------
     const signInButton = document.getElementById("sign-in-button");
     const loginDropdown = document.getElementById("login-dropdown");
