@@ -262,31 +262,31 @@ async def create_user(request: CreateAccountRequest):
         return {"status" :"failure",
                 "message": f"User {request.username} already exists"}
 
-@app.post("/log-in")  # Corrected route
-async def log_in(request: LogIn):
-    username = request.username
-    password = request.password
+# @app.post("/log-in")  # Corrected route
+# async def log_in(request: LogIn):
+#     username = request.username
+#     password = request.password
 
-    # Query the database to check for the username and password
-    results = cur.execute(f"""
-        SELECT id FROM users WHERE username = ? AND password = ?
-    """, (username, password))
+#     # Query the database to check for the username and password
+#     results = cur.execute(f"""
+#         SELECT id FROM users WHERE username = ? AND password = ?
+#     """, (username, password))
 
-    # Try to fetch the user ID
-    user = results.fetchone()
+#     # Try to fetch the user ID
+#     user = results.fetchone()
 
-    if user:
-        user_id = user[0]
-        return {
-            "status": "success",
-            "message": "Login successful",
-            "user_id": user_id
-        }
-    else:
-        return {
-            "status": "failure",
-            "message": "Username or password is incorrect"
-        }
+#     if user:
+#         user_id = user[0]
+#         return {
+#             "status": "success",
+#             "message": "Login successful",
+#             "user_id": user_id
+#         }
+#     else:
+#         return {
+#             "status": "failure",
+#             "message": "Username or password is incorrect"
+#         }
 
 @app.post("/change-availability")
 async def change_availability(request: ChangeAvailability):
