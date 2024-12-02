@@ -10,13 +10,20 @@ A project assigned to us by Matthew Harrison that must address atleast on of the
 * Describe models of computation and their relationship to complexity classes and the analysis of algorithms.
 
 ## How to install
-Download the most recent version and extract to file name.
+Download the repository and extract.
 
 ## How to use
-Double click the "**???**.sln" file to open up the project in Microsoft Visual Studio, then press the green arrow run button with the text "**???**" following it to run the program.
+From the project root:
+Start the web server:
+`node .\Web_Application\server.js`
+Start the web API:
+`uvicorn Game_API.main:app --reload --host 0.0.0.0 --port 8000`
+Open the webpage located at: `Web_Application/public/index.html`
+
 
 ## Tools & APIs
 [IGDB API](https://api-docs.igdb.com/#getting-started)
+`Add Other Libraries`
 
 ## Contributors
 [Nicholas Crump](https://github.com/Kataruse)
