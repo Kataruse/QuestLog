@@ -237,6 +237,30 @@ async def register_game(request: RegisterGame):
 
     return {"status": "success",
             "message": f"Added game {game_name} to user's library."}
+    
+    
+@app.post("/delete-game")
+async def register_game(request: RegisterGame):
+
+    user_id = request.user_id
+    game_name = request.game_name
+
+    results = cur.execute(f"""
+                        SELECT id FROM games WHERE name = "{game_name}" 
+                        """)
+    game_id = results.fetchone()[0]
+
+    print(game_id)
+
+    cur.execute(f"""
+                DELETE FROM libraries WHERE user_id = {user_id} and game_id = {game_id}
+                """)
+
+    con.commit()
+
+
+    return {"status": "success",
+            "message": f"Deleted game {game_name} from user's library."}
 
 @app.post("/create-user")
 async def create_user(request: CreateAccountRequest):
