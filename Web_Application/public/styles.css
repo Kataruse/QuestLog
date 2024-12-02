@@ -308,3 +308,25 @@ span {
 .dropdown-content.show {
     display: block; /* Make visible when 'show' class is toggled */
 }
+
+.game-title-container {
+    display: flex;
+    justify-content: space-between; /* Ensures items are spaced out */
+    align-items: center;
+    width: 100%; /* Make sure the container takes full width */
+}
+
+.game-title-container h3 {
+    margin: 0;
+    flex-grow: 1; /* Makes sure the title takes the remaining space */
+}
+
+.dropdown-button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 5px;
+    cursor: pointer;
+    border-radius: 5px;
+    margin-left: auto; /* Ensures the button is pushed to the far right */
+}
