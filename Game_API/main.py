@@ -4,10 +4,12 @@ from fastapi import FastAPI
 from pydantic import BaseModel
 from Game_API.igdbclient import IGDBClient
 from starlette.middleware.cors import CORSMiddleware
-
+import os
 import subprocess
 
 import json
+
+import ast
 
 import sqlite3
 
@@ -235,6 +237,30 @@ async def register_game(request: RegisterGame):
 
     return {"status": "success",
             "message": f"Added game {game_name} to user's library."}
+    
+    
+@app.post("/delete-game")
+async def register_game(request: RegisterGame):
+
+    user_id = request.user_id
+    game_name = request.game_name
+
+    results = cur.execute(f"""
+                        SELECT id FROM games WHERE name = "{game_name}" 
+                        """)
+    game_id = results.fetchone()[0]
+
+    print(game_id)
+
+    cur.execute(f"""
+                DELETE FROM libraries WHERE user_id = {user_id} and game_id = {game_id}
+                """)
+
+    con.commit()
+
+
+    return {"status": "success",
+            "message": f"Deleted game {game_name} from user's library."}
 
 @app.post("/create-user")
 async def create_user(request: CreateAccountRequest):
@@ -262,31 +288,31 @@ async def create_user(request: CreateAccountRequest):
         return {"status" :"failure",
                 "message": f"User {request.username} already exists"}
 
-@app.post("/log-in")  # Corrected route
-async def log_in(request: LogIn):
-    username = request.username
-    password = request.password
+# @app.post("/log-in")  # Corrected route
+# async def log_in(request: LogIn):
+#     username = request.username
+#     password = request.password
 
-    # Query the database to check for the username and password
-    results = cur.execute(f"""
-        SELECT id FROM users WHERE username = ? AND password = ?
-    """, (username, password))
+#     # Query the database to check for the username and password
+#     results = cur.execute(f"""
+#         SELECT id FROM users WHERE username = ? AND password = ?
+#     """, (username, password))
 
-    # Try to fetch the user ID
-    user = results.fetchone()
+#     # Try to fetch the user ID
+#     user = results.fetchone()
 
-    if user:
-        user_id = user[0]
-        return {
-            "status": "success",
-            "message": "Login successful",
-            "user_id": user_id
-        }
-    else:
-        return {
-            "status": "failure",
-            "message": "Username or password is incorrect"
-        }
+#     if user:
+#         user_id = user[0]
+#         return {
+#             "status": "success",
+#             "message": "Login successful",
+#             "user_id": user_id
+#         }
+#     else:
+#         return {
+#             "status": "failure",
+#             "message": "Username or password is incorrect"
+#         }
 
 @app.post("/change-availability")
 async def change_availability(request: ChangeAvailability):
@@ -403,35 +429,70 @@ async def sort_games(request: SortGames):
     algorithm = request.algorithm
     user_id = request.user_id
 
-    executable_path = "C:\\Users\\wpaxt\\Documents\\Projects\\QuestLog\\Game_API"
+    # executable_path = "C:\\Users\\wpaxt\\Documents\\Projects\\QuestLog\\Game_API"
 
-    args = ""
+    # args = ""
 
-    command = [executable_path]
-    if args:
-        command.extend(args)
+    # command = [executable_path]
+    # if args:
+    #     command.extend(args)
 
-    executable_path = ".\\Game_API\\exe\\AlgFinalTestC.exe"
+    # executable_path = ".\\Game_API\\exe\\AlgFinalTestC.exe"
 
-    command = [executable_path]
+    # command = [executable_path]
 
-    try:
-        # Run the executable and capture the output
-        result = subprocess.run(
-            command,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            text=True,
-            shell=False  # Use False for security when passing a list
-        )
+    # try:
+    #     # Run the executable and capture the output
+    #     result = subprocess.run(
+    #         command,
+    #         stdout=subprocess.PIPE,
+    #         stderr=subprocess.PIPE,
+    #         text=True,
+    #         shell=False  # Use False for security when passing a list
+    #     )
         
-        print(result.stdout)
+    #     print(result.stdout)
 
-    except FileNotFoundError as e:
-        print(f"Error: {e}")
+    # except FileNotFoundError as e:
+    #     print(f"Error: {e}")
 
     # Run get_games()
+    request = {"user_id": user_id}
+
+    
+    games = await get_games(GetGames(user_id=user_id))
+
+    games_dict = ast.literal_eval(games)
+    print(games)
+
+    # Append Other data
+    games_dict["algorithm"] = algorithm
+    games_dict["availability"] = availability
+
+    print(games_dict)
+    # Write Results to File
+
+    data_to_write = json.dumps(games_dict)
+    file_path = os.path.join("Game_API", "exe", "data.json")
+    # Open the file in write mode ('w') and write the data
+    try:
+        with open(file_path, "w") as file:
+            file.write(data_to_write)
+    except FileNotFoundError:
+        print("The folder 'exe' does not exist.")
+    except PermissionError:
+        print("Permission denied: Unable to write to the file.")
+    except Exception as e:
+        print(f"An unexpected error occurred: {e}")
+        print("Data written to file successfully.")
+
+
+
 
     # Subprocess to Sort
+
+    # Get return value from file
+
+    # 
 
     return {"WIP": "WIP"}
