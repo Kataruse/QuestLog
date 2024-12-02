@@ -26,39 +26,7 @@ document.addEventListener('DOMContentLoaded', function () {
     async function fetchAllGames() {
         try {
             const response = await fetch('http://127.0.0.1:8000/get-games'); // You need to set up this endpoint
-            const data = await response.json();
-
-            if (data && data.games && data.games.length > 0) {
-                displayGames(data.games);
-            } else {
-                savedGameListDiv.innerHTML = '<p>No games found.</p>';
-            }
-        } catch (error) {
-            console.error('Error fetching games:', error);
-            savedGameListDiv.innerHTML = '<p>Error fetching games. Please try again later.</p>';
-        }
-    }
-
-    async function algoOneGames() {
-        try {
-            const response = await fetch('http://127.0.0.1:8000/get-games'); // You need to set up this endpoint
-            const data = await response.json();
-
-            if (data && data.games && data.games.length > 0) {
-                displayGames(data.games);
-            } else {
-                savedGameListDiv.innerHTML = '<p>No games found.</p>';
-            }
-        } catch (error) {
-            console.error('Error fetching games:', error);
-            savedGameListDiv.innerHTML = '<p>Error fetching games. Please try again later.</p>';
-        }
-    }
-
-    async function algoTwoGames() {
-        try {
-            const response = await fetch('http://127.0.0.1:8000/get-games'); // You need to set up this endpoint
-            const data = await response.json();
+            const data = await response.json();            
 
             if (data && data.games && data.games.length > 0) {
                 displayGames(data.games);
@@ -361,8 +329,8 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    const algorithmOneButton = document.getElementById('apply-time-filter');
-    const algorithmTwoButton = document.getElementById('apply-time-filter');
+    const algorithmOneButton = document.getElementById('apply-algorithm-one');
+    const algorithmTwoButton = document.getElementById('apply-algorithm-two');
     const completionTimeFilterInput = document.getElementById('completion-time-filter');
     const savedGameListDiv = document.getElementById('saved-game-list');
 
@@ -376,7 +344,7 @@ document.addEventListener('DOMContentLoaded', function () {
             }
 
             // Pass the time filter to the backend to get filtered games
-            displayGames(algoOneGames());
+            displayGames(algoOneGames(timeFilter));
         });
     }
 
@@ -389,7 +357,7 @@ document.addEventListener('DOMContentLoaded', function () {
             }
 
             // Pass the time filter to the backend to get filtered games
-            displayGames(algoTwoGames());
+            displayGames(algoTwoGames(timeFilter));
 
 
         });
@@ -529,6 +497,65 @@ document.addEventListener('DOMContentLoaded', function () {
     
 
     fetchAllGames(); // Fetch the games when the page loads
+}
+
+async function algoOneGames(timeFilter) {
+    const userId = localStorage.getItem('user_id');
+    try {
+        const response = await fetch('http://127.0.0.1:8000/sort-games', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ user_id: userId, availability: timeFilter, algorithm: 0 })
+        });
+
+        console.log('Type of games:', typeof games);
+
+        const data = await response.json();
+        
+
+        console.log('Fetched data:', data); // Add this line
+
+        const parsedData = typeof data === 'string' ? JSON.parse(data) : data;
+
+            if (parsedData && parsedData.data) {
+                const games = Object.values(parsedData.data); // Convert the object into an array of games
+                displayGames(games);
+            } else {
+                savedGameListDiv.innerHTML = '<p>No games found.</p>';
+            }
+            
+    } catch (error) {
+        console.error('Error fetching games:', error);
+        savedGameListDiv.innerHTML = '<p>Error fetching games. Please try again later.</p>';
+    }
+}
+
+async function algoTwoGames(timeFilter) {
+    const userId = localStorage.getItem('user_id');
+    try {
+        const response = await fetch('http://127.0.0.1:8000/sort-games', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ user_id: userId, availability: timeFilter, algorithm: 1 })
+        });
+
+        const data = await response.json();
+
+        console.log('Fetched data:', data); // Add this line
+
+        const parsedData = typeof data === 'string' ? JSON.parse(data) : data;
+
+            if (parsedData && parsedData.data) {
+                const games = Object.values(parsedData.data); // Convert the object into an array of games
+                displayGames(games);
+            } else {
+                savedGameListDiv.innerHTML = '<p>No games found.</p>';
+            }
+            
+    } catch (error) {
+        console.error('Error fetching games:', error);
+        savedGameListDiv.innerHTML = '<p>Error fetching games. Please try again later.</p>';
+    }
 }
 
     // ------------- Update Sign In Button & Dropdown Content ---------------

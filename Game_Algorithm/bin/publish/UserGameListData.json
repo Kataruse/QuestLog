@@ -1,32 +1,130 @@
 {
   "status": "success",
-  "availability": 100,
-  "algorithm": 0,
+  "availability": 19000,
+  "algorithm": 1,
   "data": {
     "0": {
-      "user_id": 1,
-      "game_id": 2181,
-      "username": "wilki",
-      "game_name": "Wii Sports",
-      "rating": 75.25894294402642,
+      "user_id": 8,
+      "game_id": 36926,
+      "username": "Xstar03",
+      "game_name": "Monster Hunter: World",
+      "rating": 84.28059767057015,
       "rating_count": 0,
       "cover": [
         [
-          "co3vge"
+          "co1rst"
         ]
       ],
       "genres": [
         [
-          "Simulator",
-          "Sport"
+          "Role-playing (RPG)",
+          "Adventure"
         ]
       ],
       "game_platforms": [
         [
-          "Wii"
+          "PC (Microsoft Windows)",
+          "PlayStation 4",
+          "Xbox One"
         ]
       ],
       "completion_time": 0
+    },
+    "1": {
+      "user_id": 8,
+      "game_id": 11397,
+      "username": "Xstar03",
+      "game_name": "Yakuza 0",
+      "rating": 86.69155976491498,
+      "rating_count": 0,
+      "cover": [
+        [
+          "co252x"
+        ]
+      ],
+      "genres": [
+        [
+          "Role-playing (RPG)",
+          "Simulator",
+          "Hack and slash/Beat \u0027em up",
+          "Adventure"
+        ]
+      ],
+      "game_platforms": [
+        [
+          "PC (Microsoft Windows)",
+          "PlayStation 3",
+          "PlayStation 4",
+          "Xbox One"
+        ]
+      ],
+      "completion_time": 187200
+    },
+    "2": {
+      "user_id": 8,
+      "game_id": 1011,
+      "username": "Xstar03",
+      "game_name": "Borderlands 2",
+      "rating": 83.95323371904513,
+      "rating_count": 0,
+      "cover": [
+        [
+          "co20tn"
+        ]
+      ],
+      "genres": [
+        [
+          "Shooter",
+          "Role-playing (RPG)"
+        ]
+      ],
+      "game_platforms": [
+        [
+          "Linux",
+          "PC (Microsoft Windows)",
+          "PlayStation 3",
+          "Xbox 360",
+          "Mac",
+          "Android",
+          "PlayStation Vita",
+          "PlayStation 4",
+          "Xbox One",
+          "Nintendo Switch"
+        ]
+      ],
+      "completion_time": 201600
+    },
+    "3": {
+      "user_id": 8,
+      "game_id": 119171,
+      "username": "Xstar03",
+      "game_name": "Baldur\u0027s Gate 3",
+      "rating": 96.10705630225893,
+      "rating_count": 0,
+      "cover": [
+        [
+          "co670h"
+        ]
+      ],
+      "genres": [
+        [
+          "Role-playing (RPG)",
+          "Strategy",
+          "Turn-based strategy (TBS)",
+          "Tactical",
+          "Adventure"
+        ]
+      ],
+      "game_platforms": [
+        [
+          "PC (Microsoft Windows)",
+          "Mac",
+          "PlayStation 5",
+          "Xbox Series X|S",
+          "Google Stadia"
+        ]
+      ],
+      "completion_time": 583200
     }
   }
 }
