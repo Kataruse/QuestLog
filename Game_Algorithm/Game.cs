@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,43 +8,44 @@ namespace Algorithm_Test
 {
     internal class Game
     {
+        public int userID { get; private set; }
         public int gameID { get; private set; }
-        public int timeToBeat { get; private set; }
-
-        public string coverArtURL { get; private set; }
-
+        public string username { get; private set; }
+        public string gameName { get; private set; }
+        public double rating { get; private set; }
+        public int ratingCount { get; private set; }
+        public string[] cover { get; private set; }
         public string[] genres { get; private set; }
-
-        public string[] platforms { get; private set; }
-
-        public double numericalRating { get; private set; }
-
-        public int amountOfRatings { get; private set; }
-
-        public string title { get; private set; }
+        public string[] gamePlatforms { get; private set; }
+        public int completionTime { get; private set; }
+        
 
         public Game()
         {
-            gameID = 6706;
-            timeToBeat = 2;
-            coverArtURL = "https://images.igdb.com/igdb/image/upload/t_cover_big/mc1l9crq1rm2ykd37gza.webp";
-            genres = new string[2] {"Strategy", "Adventure"};
-            platforms = new string[1] { "Atari 2600" };
-            numericalRating = 48.44874012050111;
-            amountOfRatings = 36;
-            title = "E.T. the Extra-Terrestrial";
+            userID = -1;
+            gameID = -1;
+            username = "invalid";
+            gameName = "invalid";
+            rating = -1;
+            ratingCount = -1;
+            cover = new string[0];
+            genres = new string[0];
+            gamePlatforms = new string[0];
+            completionTime = -1;
         }
 
-        public Game(int _gameID, int _timeToBeat, string _coverArtURL, string[] _genres, string[] _platforms, double _numericalRating, int _amountofRatings, string _title)
+        public Game(int _userID, int _gameID, string _username, string _gameName, double _rating, int _ratingCount, string[] _cover, string[] _genres, string[] _gamePlatforms, int _completionTime)
         {
-            timeToBeat = Convert.ToInt32(Math.Round((double)_timeToBeat / 3600));
+            userID = _userID;
             gameID = _gameID;
-            coverArtURL = "https://images.igdb.com/igdb/image/upload/t_cover_big/" + _coverArtURL + ".webp";
+            username = _username;
+            gameName = _gameName;
+            rating = _rating;
+            ratingCount = ratingCount;
+            cover = _cover;
             genres = _genres;
-            platforms = _platforms;
-            numericalRating = _numericalRating;
-            amountOfRatings = _amountofRatings;
-            title = _title;
+            gamePlatforms = _gamePlatforms;
+            completionTime = Convert.ToInt32(Math.Round((double)_completionTime / 3600));
         }
     }
 }
