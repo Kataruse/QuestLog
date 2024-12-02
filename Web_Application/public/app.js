@@ -1,107 +1,149 @@
 document.addEventListener('DOMContentLoaded', function () {
-    // Handle signup form submission
+    // ------------- Go to Game List ---------------
+    const goToGameListButton = document.getElementById("go-to-game-list-button");
+    if (goToGameListButton) {
+        goToGameListButton.addEventListener('click', function () {
+            const userId = localStorage.getItem('user_id');
+            if (userId) {
+                window.location.href = 'list.html';
+            } else {
+                alert('You must be logged in to view the game list.');
+            }
+        });
+    }
+
+    // ------------- Go to Home --------------------
+    const homeButton = document.getElementById('home-button');
+    if (homeButton) {
+        homeButton.addEventListener('click', function () {
+            window.location.href = 'index.html';
+        });
+    }
+
+    // ------------- Fetch and Display All Games ---------------
+    const savedGameListDiv = document.getElementById('saved-game-list');
+
+    async function fetchAllGames() {
+        try {
+            const response = await fetch('http://127.0.0.1:8000/get-games'); // You need to set up this endpoint
+            const data = await response.json();            
+
+            if (data && data.games && data.games.length > 0) {
+                displayGames(data.games);
+            } else {
+                savedGameListDiv.innerHTML = '<p>No games found.</p>';
+            }
+        } catch (error) {
+            console.error('Error fetching games:', error);
+            savedGameListDiv.innerHTML = '<p>Error fetching games. Please try again later.</p>';
+        }
+    }
+
+    function displayGames(games) {
+        const savedGameListDiv = document.getElementById('saved-game-list');
+    savedGameListDiv.innerHTML = ''; // Clear any existing content
+
+        games.forEach(game => {
+            const gameDiv = document.createElement('div');
+            gameDiv.classList.add('game-item');
+            const gameTitle = document.createElement('h3');
+            gameTitle.textContent = game.name;
+
+            gameDiv.appendChild(gameTitle);
+            savedGameListDiv.appendChild(gameDiv);
+        });
+    }
+
+    // ------------- Logout Function ---------------
+    function logout() {
+        localStorage.removeItem('user_id');
+        localStorage.removeItem('username');
+        updateSignInButton();
+        alert('You have logged out.');
+        document.cookie = 'authToken=; Max-Age=0; path=/';
+        window.location.href = 'index.html';
+    }
+
+    // ------------- Cookie Authentication Check ---------------
+    const authToken = document.cookie.split('; ').find(row => row.startsWith('authToken='))
+        ?.split('=')[1];
+    if (authToken) {
+        document.getElementById('login-status').textContent = 'Logged in';
+    }
+
+    // ------------- Login Function ---------------
+    async function login(event) {
+        event.preventDefault();
+        const username = document.getElementById("username").value;
+        const password = document.getElementById("password").value;
+
+        try {
+            const response = await fetch('http://127.0.0.1:8000/log-in', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username, password })
+            });
+
+            const data = await response.json();
+            if (response.ok && data.status === 'success') {
+                localStorage.setItem('user_id', data.user_id);
+                localStorage.setItem('username', username);
+                updateSignInButton();
+                alert('Logged in successfully!');
+            } else {
+                alert(`Login failed: ${data.message}`);
+            }
+        } catch (error) {
+            console.error('Error logging in:', error);
+            alert('Login failed. Please try again.');
+        }
+    }
+
+    // ------------- Signup Function ---------------
     const signupForm = document.getElementById("signup-form");
-
     if (signupForm) {
-        signupForm.addEventListener("submit", async function(event) {
+        signupForm.addEventListener("submit", async function (event) {
             event.preventDefault();
-
             const username = document.getElementById("username").value;
             const email = document.getElementById("email").value;
             const password = document.getElementById("password").value;
             const confirmPassword = document.getElementById("confirmPassword").value;
 
-            if (password !== confirmPassword) {
-                return;
-            }
+            if (password !== confirmPassword) return;
 
             try {
                 const response = await fetch('http://127.0.0.1:8000/create-user', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        username,
-                        email,
-                        password: password
-                    })
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, email, password })
                 });
 
                 const data = await response.json();
-
                 if (response.ok) {
                     window.location.href = 'index.html';
                 } else {
                     alert(`Error: ${data.error}`);
                 }
             } catch (error) {
-                console.error("Error during password hashing:", error);
+                console.error("Error during signup:", error);
             }
         });
     }
 
-    // Handle login form submission
-    const loginForm = document.getElementById("login-form");
-
-    if (loginForm) {
-        loginForm.addEventListener('submit', async function (event) {
-            event.preventDefault();
-
-            const username = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
-
-            try {
-                const response = await fetch('http://127.0.0.1:8000/log-in', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        username,
-                        password
-                    })
-                });
-
-                const data = await response.json();
-
-                if (response.ok && data.status === 'success') {
-                    // Store user_id and username in localStorage
-                    localStorage.setItem('user_id', data.user_id);
-                    localStorage.setItem('username', username);
-
-                    // Update the UI with the username
-                    updateSignInButton();
-                } else {
-                    alert(`Login failed: ${data.message}`);
-                }
-            } catch (error) {
-                console.error('Error logging in:', error);
-                alert('Login failed. Please try again.');
-            }
-        });
-    }
-
-    // Handle search input functionality (only if the search bar exists)
-    const searchInput = document.getElementById('search-bar'); // Search bar input
-    const gameListDiv = document.getElementById('gameList'); // Container for game results
-
+    // ------------- Search Function ---------------
+    const searchInput = document.getElementById('search-bar');
+    const gameListDiv = document.getElementById('gameList');
     if (searchInput) {
         let debounceTimer;
-
-        // Function to handle search input
         function handleInput() {
-            clearTimeout(debounceTimer); // Clear any existing debounce timers
-
-            // Set a new debounce timer
+            clearTimeout(debounceTimer);
             debounceTimer = setTimeout(() => {
                 const query = searchInput.value.trim();
                 if (!query) {
-                    gameListDiv.innerHTML = ''; // Clear results if input is empty
+                    gameListDiv.innerHTML = '';
                     return;
                 }
 
-                // Send the query to the backend
                 fetch(`http://127.0.0.1:8000/search`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -119,17 +161,15 @@ document.addEventListener('DOMContentLoaded', function () {
                         console.error('Error fetching games:', error);
                         gameListDiv.innerHTML = '<p>Error fetching results. Please try again later.</p>';
                     });
-            }, 500); // Debounce delay of 500ms
+            }, 500);
         }
 
-        // Function to display search results
+        // ------------- Display Search Results ---------------
         function displayGameResults(games) {
-            gameListDiv.innerHTML = ''; // Clear previous results
-
+            gameListDiv.innerHTML = '';
             games.forEach(game => {
                 const gameDiv = document.createElement('div');
                 gameDiv.classList.add('game-item');
-
                 const gameHeader = document.createElement('div');
                 gameHeader.classList.add('game-header');
 
@@ -146,40 +186,35 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 const gameDetails = document.createElement('div');
                 gameDetails.classList.add('game-details');
-                gameDetails.style.display = 'none'; // Hide details by default
+                gameDetails.style.display = 'none';
 
                 dropdownButton.addEventListener('click', async () => {
                     const isVisible = gameDetails.style.display === 'flex';
-
                     if (isVisible) {
                         gameDetails.style.display = 'none';
                         dropdownButton.textContent = '▼';
                     } else {
                         if (!gameDetails.innerHTML) {
                             const details = await fetchGameDetails(game.name);
-
                             gameDetails.innerHTML = `
                                 <div class="game-details-left">
                                     <p><strong>Rating:</strong> ${details.rating || 'No Rating Available'}</p>
-                                    <p><strong>Platforms:</strong> ${details.platforms.length > 0 ? details.platforms.join(', ') : 'No platforms available'}</p>
-                                    <p><strong>Genres:</strong> ${details.genres.length > 0 ? details.genres.join(', ') : 'No genres available'}</p>
+                                    <p><strong>Platforms:</strong> ${details.platforms.join(', ') || 'No platforms available'}</p>
+                                    <p><strong>Genres:</strong> ${details.genres.join(', ') || 'No genres available'}</p>
                                     <p><strong>Time to Beat:</strong> ${details.comp_time || 'No Time Listed'}</p>
                                 </div>
                                 <div class="game-details-right">
-                                    <img src="${details.cover ? `https://images.igdb.com/igdb/image/upload/t_cover_big/${details.cover}.webp` : 'https://via.placeholder.com/150'}" alt="${game.name} Cover" class="game-cover">
+                                    <img src="${details.cover || 'https://via.placeholder.com/150'}" alt="${game.name} Cover" class="game-cover">
                                 </div>
                             `;
-
                             const addToListButton = document.createElement('button');
                             addToListButton.classList.add('add-to-list-button');
                             addToListButton.textContent = 'Add to List';
                             addToListButton.addEventListener('click', () => {
                                 addGameToDatabase(game);
                             });
-
                             gameDetails.appendChild(addToListButton);
                         }
-
                         gameDetails.style.display = 'flex';
                         dropdownButton.textContent = '▲';
                     }
@@ -190,6 +225,7 @@ document.addEventListener('DOMContentLoaded', function () {
             });
         }
 
+        // ------------- Fetch Game Details ---------------
         function fetchGameDetails(gameName) {
             return fetch(`http://127.0.0.1:8000/get-info`, {
                 method: 'POST',
@@ -197,139 +233,367 @@ document.addEventListener('DOMContentLoaded', function () {
                 body: JSON.stringify({ name: gameName }),
             })
                 .then(response => response.json())
-                .then(data => {
-                    return {
-                        cover: data.cover,
-                        rating: data.rating || 'N/A',
-                        platforms: data.platforms || [],
-                        genres: data.genres || [],
-                        comp_time: data.comp_time_in_secs
-                            ? `${(data.comp_time_in_secs / 3600).toFixed(1)} Hours`
-                            : 'N/A',
-                    };
-                })
+                .then(data => ({
+                    cover: data.cover ? `https://images.igdb.com/igdb/image/upload/t_cover_big/${data.cover}.webp` : '',
+                    rating: data.rating || 'N/A',
+                    platforms: data.platforms || [],
+                    genres: data.genres || [],
+                    comp_time: data.comp_time_in_secs ? `${(data.comp_time_in_secs / 3600).toFixed(1)} Hours` : 'N/A',
+                }))
                 .catch(error => {
                     console.error('Error fetching game details:', error);
                     return {};
                 });
         }
 
-        // Attach the event listener to the search input
+        // ------------- Debounce Search Input ---------------
         searchInput.addEventListener('input', handleInput);
     }
 
-    // Handle the login dropdown visibility toggle
-    const signInButton = document.getElementById("sign-in-button");
-    const loginDropdown = document.getElementById("login-dropdown");
-
-    // Update the sign-in button and dropdown based on login status
-    function updateSignInButton() {
-        const storedUsername = localStorage.getItem("username");
-
-        // Clear and reset the dropdown to avoid inconsistencies
-        loginDropdown.innerHTML = ''; // Clear previous content
-
-        if (storedUsername) {
-            // User is logged in
-            signInButton.textContent = storedUsername; // Show username
-
-            // Create logout button
-            const logoutButton = document.createElement("button");
-            logoutButton.textContent = "Log Out";
-            logoutButton.addEventListener("click", logout);
-            logoutButton.classList.add("logout-option");
-
-            loginDropdown.appendChild(logoutButton);
-        } else {
-            // User is not logged in
-            signInButton.textContent = "Sign In"; // Reset button text
-            loginDropdown.innerHTML = `
-                <form id="login-form">
-                    <label for="username">Username:</label>
-                    <input type="text" id="username" name="username" placeholder="Enter your username" required>
-                    <label for="password">Password:</label>
-                    <input type="password" id="password" name="password" placeholder="Enter your password" required>
-                    <button type="submit">Log In</button>
-                </form>
-                <a href="signup.html" class="signup-link">Create an account</a>
-            `;
-
-            // Reattach the login form event listener
-            const loginForm = document.getElementById("login-form");
-            if (loginForm) {
-                loginForm.addEventListener("submit", login);
-            }
+    // ------------- Add game to List ---------------
+    function addGameToDatabase(game) {
+        const userId = localStorage.getItem('user_id');
+        if (!userId) {
+            alert('You must be logged in to add games to your list.');
+            return;
         }
+    
+        fetch('http://127.0.0.1:8000/register-game', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                user_id: userId,
+                game_name: game.name
+            })
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    alert(`Game "${game.name}" added to your list!`);
+                } else {
+                    alert(`Failed to add game: ${data.message}`);
+                }
+            })
+            .catch(error => {
+                console.error('Error adding game:', error);
+                alert('An error occurred while adding the game to your list.');
+            });
     }
 
-    // Handle login functionality
-    async function login(event) {
-        event.preventDefault();
+    // ------------- Sign In Button & Dropdown ---------------
+    const signInButton = document.getElementById("sign-in-button");
+    const loginDropdown = document.getElementById("login-dropdown");
+    signInButton.addEventListener('click', function () {
+        loginDropdown.classList.toggle('hidden');
+    });
 
-        const username = document.getElementById("username").value;
-        const password = document.getElementById("password").value;
+    // ------------- Search and Fetch All Games for List Page ---------------
+    if (document.location.pathname.includes("list.html")) {
+    // Fetch games only if on list.html
+    
+    async function fetchAllGames() {
+        const userId = localStorage.getItem('user_id');
+        
+        if (!userId) {
+            savedGameListDiv.innerHTML = '<p>You must be logged in to view your game list.</p>';
+            return;
+        }
 
         try {
-            const response = await fetch("http://127.0.0.1:8000/log-in", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({ username, password }),
+            const response = await fetch('http://127.0.0.1:8000/get-games', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ user_id: userId })
             });
+
+            if (!response.ok) {
+                console.error('Failed to fetch games:', response.status);
+                savedGameListDiv.innerHTML = '<p>Error fetching games. Please try again later.</p>';
+                return;
+            }
 
             const data = await response.json();
 
-            if (response.ok && data.status === "success") {
-                // Store user_id and username in localStorage
-                localStorage.setItem("user_id", data.user_id);
-                localStorage.setItem("username", username);
+            // Ensure the data is in the correct format (in case it's a stringified JSON)
+            const parsedData = typeof data === 'string' ? JSON.parse(data) : data;
 
-                // Update the dropdown to show the logout button
-                updateSignInButton();
-                loginDropdown.classList.add("hidden"); // Hide the dropdown
+            if (parsedData && parsedData.data) {
+                const games = Object.values(parsedData.data); // Convert the object into an array of games
+                displayGames(games);
             } else {
-                alert(`Login failed: ${data.message}`);
+                savedGameListDiv.innerHTML = '<p>No games found.</p>';
             }
         } catch (error) {
-            console.error("Error logging in:", error);
-            alert("Login failed. Please try again.");
+            console.error('Error fetching games:', error);
+            savedGameListDiv.innerHTML = '<p>Error fetching games. Please try again later.</p>';
         }
     }
 
-    // Handle logout functionality
-    function logout() {
-        localStorage.removeItem("user_id");
-        localStorage.removeItem("username");
+    const algorithmOneButton = document.getElementById('apply-algorithm-one');
+    const algorithmTwoButton = document.getElementById('apply-algorithm-two');
+    const completionTimeFilterInput = document.getElementById('completion-time-filter');
+    const savedGameListDiv = document.getElementById('saved-game-list');
 
-        updateSignInButton(); // Update the UI
-        loginDropdown.classList.add("hidden"); // Hide the dropdown
-        location.reload();
-    }
+    // ------------- Apply Completion Time Filter ---------------
+    if (algorithmOneButton) {
+        algorithmOneButton.addEventListener('click', function () {
+            const timeFilter = parseFloat(completionTimeFilterInput.value);
+            if (isNaN(timeFilter) || timeFilter <= 0) {
+                alert('Please enter a valid completion time.');
+                return;
+            }
 
-    // Toggle dropdown visibility on button click
-    if (signInButton && loginDropdown) {
-        signInButton.addEventListener("click", (event) => {
-            event.stopPropagation(); // Prevent closing immediately
-            loginDropdown.classList.toggle("hidden");
+            // Pass the time filter to the backend to get filtered games
+            displayGames(algoOneGames(timeFilter));
         });
     }
 
-    // Close dropdown when clicking outside
-    document.addEventListener("click", (event) => {
-        if (
-            !loginDropdown.contains(event.target) && // Click outside the dropdown
-            !signInButton.contains(event.target) // Click outside the button
-        ) {
-            loginDropdown.classList.add("hidden"); // Hide the dropdown
+    if (algorithmTwoButton) {
+        algorithmTwoButton.addEventListener('click', function () {
+            const timeFilter = parseFloat(completionTimeFilterInput.value);
+            if (isNaN(timeFilter) || timeFilter <= 0) {
+                alert('Please enter a valid completion time.');
+                return;
+            }
+
+            // Pass the time filter to the backend to get filtered games
+            displayGames(algoTwoGames(timeFilter));
+
+
+        });
+    }
+
+    // ------------- Fetch Filtered Games by Completion Time ---------------
+    async function fetchFilteredGames(timeFilter) {
+        const userId = localStorage.getItem('user_id');
+        if (!userId) {
+            savedGameListDiv.innerHTML = '<p>You must be logged in to view your game list.</p>';
+            return;
         }
-    });
 
-    // Check login status on page load
-    document.addEventListener("DOMContentLoaded", () => {
-        updateSignInButton(); // Ensure the correct state is loaded on page load
-        // Also make sure the dropdown is hidden on page load if necessary
-        loginDropdown.classList.add("hidden");
-    });
+        try {
+            const response = await fetch('http://127.0.0.1:8000/filter-games', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ user_id: userId, completion_time: timeFilter })
+            });
 
+            if (!response.ok) {
+                console.error('Failed to fetch filtered games:', response.status);
+                savedGameListDiv.innerHTML = '<p>Error fetching filtered games. Please try again later.</p>';
+                return;
+            }
+
+            const data = await response.json();
+            if (data && data.games && data.games.length > 0) {
+                displayGames(data.games);
+            } else {
+                savedGameListDiv.innerHTML = '<p>No games found for the specified completion time.</p>';
+            }
+        } catch (error) {
+            console.error('Error fetching filtered games:', error);
+            savedGameListDiv.innerHTML = '<p>Error fetching filtered games. Please try again later.</p>';
+        }
+    }
+
+    function displayGames(games) {
+        savedGameListDiv.innerHTML = ''; // Clear previous content
+    
+        if (games.length === 0) {
+            savedGameListDiv.innerHTML = '<p>No games found.</p>';
+            return;
+        }
+    
+        games.forEach(game => {
+            const gameDiv = document.createElement('div');
+            gameDiv.classList.add('game-item');
+        
+            // Game Title with Dropdown Button
+            const gameTitleDiv = document.createElement('div');
+            gameTitleDiv.classList.add('game-title-container');
+    
+            // Game title
+            const gameTitle = document.createElement('h3');
+            gameTitle.textContent = game.game_name; // Use the 'game_name' field
+            gameTitleDiv.appendChild(gameTitle);
+    
+            // Dropdown Button
+            const dropdownButton = document.createElement('button');
+            dropdownButton.textContent = '▼';
+            dropdownButton.classList.add('button');
+            gameTitleDiv.appendChild(dropdownButton);
+    
+            gameDiv.appendChild(gameTitleDiv);
+        
+            // Game Details (hidden by default)
+            const gameDetailsDiv = document.createElement('div');
+            gameDetailsDiv.classList.add('game-details');
+            gameDetailsDiv.style.display = 'none'; // Initially hidden
+        
+            // Add rating
+            const gameRating = document.createElement('p');
+            gameRating.textContent = `Rating: ${game.rating ? game.rating.toFixed(2) : 'N/A'} (${game.rating_count || 0} ratings)`;
+            gameDetailsDiv.appendChild(gameRating);
+        
+            // Add cover image if available
+            if (game.cover && game.cover[0]) {
+                const gameImage = document.createElement('img');
+                gameImage.src = `https://images.igdb.com/igdb/image/upload/t_cover_big/${game.cover[0]}.jpg`;
+                gameImage.alt = game.game_name;
+                gameImage.classList.add('game-image');
+                gameDetailsDiv.appendChild(gameImage);
+            }
+        
+            // Display genres
+            const genresList = document.createElement('p');
+            genresList.textContent = `Genres: ${game.genres ? game.genres.map(genre => genre[0]).join(', ') : 'N/A'}`;
+            gameDetailsDiv.appendChild(genresList);
+        
+            // Display platforms
+            const platformsList = document.createElement('p');
+            platformsList.textContent = `Platforms: ${game.game_platforms ? game.game_platforms.map(platform => platform[0]).join(', ') : 'N/A'}`;
+            gameDetailsDiv.appendChild(platformsList);
+        
+            // Completion time if available
+            if (game.completion_time && game.completion_time > 0) {
+                const completionTime = document.createElement('p');
+                completionTime.textContent = `Completion time: ${(game.completion_time / 3600).toFixed(1)} hours`;
+                gameDetailsDiv.appendChild(completionTime);
+            }
+        
+            // Remove from List Button (Initially hidden)
+            const removeButton = document.createElement('button');
+            removeButton.textContent = 'Remove from List';
+            removeButton.classList.add('button', 'remove-button');
+            removeButton.style.display = 'none'; // Hide initially
+            gameDetailsDiv.appendChild(removeButton); // Append the button to the gameDetailsDiv
+    
+            // Add remove button functionality
+            removeButton.addEventListener('click', () => {
+                // Remove the game from the DOM
+                savedGameListDiv.removeChild(gameDiv);
+                // Optionally, you can also handle removing the game from the game array or database here.
+            });
+    
+            gameDiv.appendChild(gameDetailsDiv);
+            savedGameListDiv.appendChild(gameDiv);
+        
+            // Toggle visibility of game details and remove button on button click
+            dropdownButton.addEventListener('click', () => {
+                if (gameDetailsDiv.style.display === 'none') {
+                    gameDetailsDiv.style.display = 'block';
+                    removeButton.style.display = 'inline-block'; // Show remove button
+                    dropdownButton.textContent = '▲'; // Change to '▲' when expanded
+                } else {
+                    gameDetailsDiv.style.display = 'none';
+                    removeButton.style.display = 'none'; // Hide remove button
+                    dropdownButton.textContent = '▼'; // Change to '▼' when collapsed
+                }
+            });
+        });
+    }
+    
+    
+    
+
+    fetchAllGames(); // Fetch the games when the page loads
+}
+
+async function algoOneGames(timeFilter) {
+    const userId = localStorage.getItem('user_id');
+    try {
+        const response = await fetch('http://127.0.0.1:8000/sort-games', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ user_id: userId, availability: timeFilter, algorithm: 0 })
+        });
+
+        console.log('Type of games:', typeof games);
+
+        const data = await response.json();
+        
+
+        console.log('Fetched data:', data); // Add this line
+
+        const parsedData = typeof data === 'string' ? JSON.parse(data) : data;
+
+            if (parsedData && parsedData.data) {
+                const games = Object.values(parsedData.data); // Convert the object into an array of games
+                displayGames(games);
+            } else {
+                savedGameListDiv.innerHTML = '<p>No games found.</p>';
+            }
+            
+    } catch (error) {
+        console.error('Error fetching games:', error);
+        savedGameListDiv.innerHTML = '<p>Error fetching games. Please try again later.</p>';
+    }
+}
+
+async function algoTwoGames(timeFilter) {
+    const userId = localStorage.getItem('user_id');
+    try {
+        const response = await fetch('http://127.0.0.1:8000/sort-games', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ user_id: userId, availability: timeFilter, algorithm: 1 })
+        });
+
+        const data = await response.json();
+
+        console.log('Fetched data:', data); // Add this line
+
+        const parsedData = typeof data === 'string' ? JSON.parse(data) : data;
+
+            if (parsedData && parsedData.data) {
+                const games = Object.values(parsedData.data); // Convert the object into an array of games
+                displayGames(games);
+            } else {
+                savedGameListDiv.innerHTML = '<p>No games found.</p>';
+            }
+            
+    } catch (error) {
+        console.error('Error fetching games:', error);
+        savedGameListDiv.innerHTML = '<p>Error fetching games. Please try again later.</p>';
+    }
+}
+
+    // ------------- Update Sign In Button & Dropdown Content ---------------
+    function updateSignInButton() {
+        const storedUsername = localStorage.getItem("username");
+        const loginDropdown = document.getElementById("login-dropdown");
+        const signInButton = document.getElementById("sign-in-button");
+        loginDropdown.innerHTML = "";
+
+        if (storedUsername) {
+            signInButton.textContent = storedUsername;
+            const loggedInMessage = document.createElement("p");
+            loggedInMessage.textContent = `Logged in as ${storedUsername}`;
+            loggedInMessage.style.margin = "10px 0";
+            loginDropdown.appendChild(loggedInMessage);
+
+            const logoutButton = document.createElement("button");
+            logoutButton.textContent = "Log Out";
+            logoutButton.classList.add("logout-button");
+            logoutButton.addEventListener("click", logout);
+            loginDropdown.appendChild(logoutButton);
+        } else {
+            signInButton.textContent = "Sign In";
+            const loginForm = document.createElement("form");
+            loginForm.innerHTML = `
+                <label for="username">Username:</label>
+                <input type="text" id="username" name="username" placeholder="Enter your username" required>
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" placeholder="Enter your password" required>
+                <div class="button-container">
+                    <button type="submit" class="login-button">Log In</button>
+                    <a href="signup.html" class="signup-link">Create an Account</a>
+                </div>
+            `;
+            loginForm.addEventListener("submit", login);
+            loginDropdown.appendChild(loginForm);
+        }
+    }
+
+    updateSignInButton();
 });

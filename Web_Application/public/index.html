@@ -7,14 +7,14 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 
-<body>    
+<body>
     <!-- Header -->
     <header>
         <div class="logo">
             <h1>Quest Log <span>📖</span></h1>
         </div>
         <nav>
-            <button class="list">List</button>
+            <button id="go-to-game-list-button">Go to Game List</button>
             <button id="sign-in-button" class="sign-in">Sign In</button>
         </nav>
     </header>
@@ -31,6 +31,7 @@
             <div class="button-container">
                 <a href="signup.html" class="signup-link">Create an Account</a>
                 <button type="submit" class="login-button">Log In</button>
+                <span id="login-status" class="login-status"></span>
             </div>
         </form>
     </div>

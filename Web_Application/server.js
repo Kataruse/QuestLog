@@ -1,5 +1,5 @@
 const express = require('express');
-const bcrypt = require('bcrypt');  // Hashing library
+// const bcrypt = require('bcrypt');  // Hashing library
 const bodyParser = require('body-parser');  // For parsing incoming request bodies
 const cors = require('cors');  // Cross-origin resource sharing (CORS) middleware
 

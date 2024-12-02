@@ -1,46 +1,169 @@
-﻿using Algorithm_Test;
-using Microsoft.VisualBasic;
+using Algorithm_Test;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.InteropServices;
+using System.IO;
+using System.Text.Json;
 
-Random random = new Random();
-
-string[] stringArray1 = new string[2];
-string[] stringsArray2 = new string[2];
-List<Game> gameList = new List<Game>();
-
-
-for (int i = 1; i <= 50; i++)
+namespace Algorithm_Test
 {
-    int randomTimeToBeat = random.Next(10, 300 * 3600);
-    int randomCoverID = random.Next(10, 3000);
-    double randomRating = random.NextDouble() * 100;
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            try
+            {
+                List<Game> gameList = new List<Game>();
 
-    Game newGame = new Game(i, randomTimeToBeat, randomCoverID.ToString(), stringArray1, stringsArray2, randomRating, 0, "");
-    gameList.Add(newGame);
+                string jsonFilePath = "Game_Algorithm/bin/publish/UserGameListData.json"; // File path
+                string jsonData = File.ReadAllText(jsonFilePath);
+                JsonDocument jsonDocument = JsonDocument.Parse(jsonData);
+
+                // Obtain availability and algorithm from JSON file
+                int availability = jsonDocument.RootElement.GetProperty("availability").GetInt32();
+                int algorithm = jsonDocument.RootElement.GetProperty("algorithm").GetInt32();
+                string status = jsonDocument.RootElement.GetProperty("status").ToString();
+
+                var data = jsonDocument.RootElement.GetProperty("data").EnumerateObject();
+
+                // Obtain data from JSON file
+                foreach (var game in data)
+                {
+                    JsonElement gameDetails = game.Value;
+                    int userId = gameDetails.GetProperty("user_id").GetInt32();
+                    int gameId = gameDetails.GetProperty("game_id").GetInt32();
+                    string username = gameDetails.GetProperty("username").GetString();
+                    string gameName = gameDetails.GetProperty("game_name").GetString();
+                    double rating = gameDetails.GetProperty("rating").GetDouble();
+                    int ratingCount = gameDetails.GetProperty("rating_count").GetInt32();
+
+                    // Parse nested arrays for cover, genres, and game platforms
+                    string[] cover = gameDetails.GetProperty("cover").EnumerateArray()
+                                                  .SelectMany(coverArray => coverArray.EnumerateArray()
+                                                  .Select(element => element.GetString()))
+                                                  .Where(value => value != null)
+                                                  .ToArray();
+
+                    string[] genres = gameDetails.GetProperty("genres").EnumerateArray()
+                                                   .SelectMany(genreArray => genreArray.EnumerateArray()
+                                                   .Select(element => element.GetString()))
+                                                   .Where(value => value != null)
+                                                   .ToArray();
+
+                    string[] gamePlatforms = gameDetails.GetProperty("game_platforms").EnumerateArray()
+                                                         .SelectMany(platformArray => platformArray.EnumerateArray()
+                                                         .Select(element => element.GetString()))
+                                                         .Where(value => value != null)
+                                                         .ToArray();
+
+                    int completionTime = gameDetails.GetProperty("completion_time").GetInt32();
+
+                    // Create Game object with properly parsed arrays
+                    Game newGame = new Game(userId, gameId, username, gameName, rating, ratingCount, cover, genres, gamePlatforms, completionTime);
+                    gameList.Add(newGame);
+                }
+
+
+                User user = new User(gameList, availability);
+
+                if (algorithm == 0)
+                {
+                    Game gamePicked = user.PickOneToPlay();
+
+                    var updatedJson = new
+                    {
+                        status = "success",
+                        availability = availability,
+                        algorithm = algorithm,
+                        data = new Dictionary<string, object>
+        {
+            {
+                "0", new
+                {
+                    user_id = gamePicked.userID,
+                    game_id = gamePicked.gameID,
+                    username = gamePicked.username,
+                    game_name = gamePicked.gameName,
+                    rating = gamePicked.rating,
+                    rating_count = gamePicked.ratingCount,
+                    cover = new List<List<string>> { new List<string>(gamePicked.cover) },
+                    genres = new List<List<string>> { new List<string>(gamePicked.genres) },
+                    game_platforms = new List<List<string>> { new List<string>(gamePicked.gamePlatforms) },
+                    completion_time = gamePicked.completionTime * 3600 // Convert back to seconds
+                }
+            }
+        }
+                    };
+
+                    string jsonString = JsonSerializer.Serialize(updatedJson, new JsonSerializerOptions { WriteIndented = true });
+                    File.WriteAllText(jsonFilePath, jsonString);
+                }
+                else if (algorithm == 1)
+                {
+                    List<Game> gamePickedList = user.PickMultipleToPlay();
+
+                    var dataDictionary = new Dictionary<string, object>();
+                    for (int i = 0; i < gamePickedList.Count; i++)
+                    {
+                        Game game = gamePickedList[i];
+                        dataDictionary.Add(i.ToString(), new
+                        {
+                            user_id = game.userID,
+                            game_id = game.gameID,
+                            username = game.username,
+                            game_name = game.gameName,
+                            rating = game.rating,
+                            rating_count = game.ratingCount,
+                            cover = new List<List<string>> { new List<string>(game.cover) },
+                            genres = new List<List<string>> { new List<string>(game.genres) },
+                            game_platforms = new List<List<string>> { new List<string>(game.gamePlatforms) },
+                            completion_time = game.completionTime * 3600 // Convert back to seconds
+                        });
+                    }
+
+                    var updatedJson = new
+                    {
+                        status = "success",
+                        availability = availability,
+                        algorithm = algorithm,
+                        data = dataDictionary
+                    };
+
+                    string jsonString = JsonSerializer.Serialize(updatedJson, new JsonSerializerOptions { WriteIndented = true });
+                    File.WriteAllText(jsonFilePath, jsonString);
+                }
+                else
+                {
+                    Console.WriteLine("Uh oh, not a valid algorithm D:");
+
+                    var updatedJson = new
+                    {
+                        status = "success",
+                        availability = availability,
+                        algorithm = algorithm
+                    };
+
+                    string jsonString = JsonSerializer.Serialize(updatedJson, new JsonSerializerOptions { WriteIndented = true });
+                    File.WriteAllText(jsonFilePath, jsonString);
+                }
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+        }
+
+        static void WriteJsonToFile(object updatedJson, string filePath)
+        {
+            try
+            {
+                string jsonString = JsonSerializer.Serialize(updatedJson, new JsonSerializerOptions { WriteIndented = true });
+                File.WriteAllText(filePath, jsonString);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Failed to write JSON file: {ex.Message}");
+            }
+        }
+    }
 }
-
-User dummyUser = new User("Alice", 0, gameList, random.Next(10, 300));
-
-Console.WriteLine("Games in library:");
-foreach (var game in dummyUser.library)
-{
-    Console.WriteLine($"Game ID: {game.gameID}, Time to Beat: {game.timeToBeat}, Rating: {game.numericalRating}");
-}
-
-Console.WriteLine($"\nAvailability: {dummyUser.availability}");
-
-Game pickedGame = dummyUser.PickOneToPlay();
-
-Console.WriteLine($"Game ID: {pickedGame.gameID}, Time to Beat: {pickedGame.timeToBeat}, Rating: {pickedGame.numericalRating}\n");
-
-List<Game> pickedGames = dummyUser.PickMultipleToPlay();
-int totalTime = 0;
-foreach (var game in pickedGames)
-{
-    Console.WriteLine($"Game ID: {game.gameID}, Time to Beat: {game.timeToBeat}, Rating: {game.numericalRating}");
-    totalTime = totalTime + game.timeToBeat;
-}
-Console.WriteLine($"\nTotal Time Used: {totalTime}, Extra Time: {dummyUser.availability - totalTime}");

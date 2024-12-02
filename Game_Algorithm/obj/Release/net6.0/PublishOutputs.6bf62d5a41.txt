@@ -1,0 +1,5 @@
+C:\Users\wpaxt\Documents\Projects\QuestLog\Game_Algorithm\bin\publish\Algorithm Test.exe
+C:\Users\wpaxt\Documents\Projects\QuestLog\Game_Algorithm\bin\publish\Algorithm Test.dll
+C:\Users\wpaxt\Documents\Projects\QuestLog\Game_Algorithm\bin\publish\Algorithm Test.deps.json
+C:\Users\wpaxt\Documents\Projects\QuestLog\Game_Algorithm\bin\publish\Algorithm Test.runtimeconfig.json
+C:\Users\wpaxt\Documents\Projects\QuestLog\Game_Algorithm\bin\publish\Algorithm Test.pdb
