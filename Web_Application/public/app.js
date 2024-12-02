@@ -291,7 +291,6 @@ document.addEventListener('DOMContentLoaded', function () {
     // ------------- Search and Fetch All Games for List Page ---------------
     if (document.location.pathname.includes("list.html")) {
     // Fetch games only if on list.html
-    const savedGameListDiv = document.getElementById('saved-game-list');
     
     async function fetchAllGames() {
         const userId = localStorage.getItem('user_id');
@@ -330,6 +329,57 @@ document.addEventListener('DOMContentLoaded', function () {
         } catch (error) {
             console.error('Error fetching games:', error);
             savedGameListDiv.innerHTML = '<p>Error fetching games. Please try again later.</p>';
+        }
+    }
+
+    const applyTimeFilterButton = document.getElementById('apply-time-filter');
+    const completionTimeFilterInput = document.getElementById('completion-time-filter');
+    const savedGameListDiv = document.getElementById('saved-game-list');
+
+    // ------------- Apply Completion Time Filter ---------------
+    if (applyTimeFilterButton) {
+        applyTimeFilterButton.addEventListener('click', function () {
+            const timeFilter = parseFloat(completionTimeFilterInput.value);
+            if (isNaN(timeFilter) || timeFilter <= 0) {
+                alert('Please enter a valid completion time.');
+                return;
+            }
+
+            // Pass the time filter to the backend to get filtered games
+            fetchFilteredGames(timeFilter);
+        });
+    }
+
+    // ------------- Fetch Filtered Games by Completion Time ---------------
+    async function fetchFilteredGames(timeFilter) {
+        const userId = localStorage.getItem('user_id');
+        if (!userId) {
+            savedGameListDiv.innerHTML = '<p>You must be logged in to view your game list.</p>';
+            return;
+        }
+
+        try {
+            const response = await fetch('http://127.0.0.1:8000/filter-games', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ user_id: userId, completion_time: timeFilter })
+            });
+
+            if (!response.ok) {
+                console.error('Failed to fetch filtered games:', response.status);
+                savedGameListDiv.innerHTML = '<p>Error fetching filtered games. Please try again later.</p>';
+                return;
+            }
+
+            const data = await response.json();
+            if (data && data.games && data.games.length > 0) {
+                displayGames(data.games);
+            } else {
+                savedGameListDiv.innerHTML = '<p>No games found for the specified completion time.</p>';
+            }
+        } catch (error) {
+            console.error('Error fetching filtered games:', error);
+            savedGameListDiv.innerHTML = '<p>Error fetching filtered games. Please try again later.</p>';
         }
     }
 
