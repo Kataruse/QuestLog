@@ -165,6 +165,72 @@ header .sign-in:hover {
     margin-top: 10px;
 }
 
+/* Basic styling for the game item */
+.game-item {
+    margin: 10px 0;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+}
+
+/* Container for game title and dropdown button */
+.game-title-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.game-title-container h3 {
+    margin: 0;
+}
+
+.dropdown-button {
+    background-color: transparent;
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+    color: #333;
+}
+
+/* Initially hide the game details */
+.game-details {
+    margin-top: 10px;
+}
+
+/* Style the button when hovered */
+.dropdown-button:hover {
+    color: #007BFF;
+}
+
+/* Additional game detail styling */
+.game-details p {
+    margin: 5px 0;
+}
+
+.game-details img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin-top: 10px;
+}
+
+.game-details-left {
+    flex: 1;
+}
+
+.game-details-right img {
+    max-width: 150px;
+    border-radius: 10px;
+}
+
+.game-details-right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+
 /* Game Header */
 .game-header {
     display: flex;
@@ -189,23 +255,6 @@ header .sign-in:hover {
     transform: rotate(180deg);
 }
 
-/* Game Details */
-.game-details {
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
-    margin-bottom: 20px;
-}
-
-.game-details-left {
-    flex: 1;
-}
-
-.game-details-right img {
-    max-width: 150px;
-    border-radius: 10px;
-}
-
 /* Left Section: Add to List Button */
 .add-to-list-button {
     background-color: #28a745;
@@ -217,16 +266,11 @@ header .sign-in:hover {
     margin-bottom: -145px;
     margin-left: 10px;
     margin-right: 10px;
+    height: 20%;
 }
 
 .add-to-list-button:hover {
     background-color: #218838;
-}
-
-.game-details-right {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
 }
 
 /* Login Dropdown Styling */
@@ -334,4 +378,60 @@ span {
 
 .dropdown-content.show {
     display: block; /* Make visible when 'show' class is toggled */
+}
+
+/* Style for game card container */
+.game-card {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    border: 1px solid #ddd;
+    padding: 15px;
+    margin: 15px 0;
+    border-radius: 10px;
+    background-color: #f9f9f9;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.game-card img {
+    width: 120px;
+    height: 180px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-left: 15px;
+}
+
+.game-info {
+    flex-grow: 1;
+}
+
+.game-info p {
+    margin: 5px 0;
+}
+
+.game-button {
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s;
+}
+
+.game-button:hover {
+    background-color: #45a049;
+}
+
+.game-card h3 {
+    font-size: 1.5em;
+    margin: 0;
+}
+
+/* Hover effect for the card */
+.game-card:hover {
+    background-color: #f0f0f0;
+    transform: scale(1.02);
+    transition: transform 0.3s ease-in-out;
 }

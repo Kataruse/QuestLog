@@ -336,53 +336,83 @@ document.addEventListener('DOMContentLoaded', function () {
 
         function displayGames(games) {
             savedGameListDiv.innerHTML = ''; // Clear previous content
-
+        
             if (games.length === 0) {
                 savedGameListDiv.innerHTML = '<p>No games found.</p>';
                 return;
             }
-
+        
             games.forEach(game => {
                 const gameDiv = document.createElement('div');
                 gameDiv.classList.add('game-item');
-
+        
+                // Game Title with Dropdown Button
+                const gameTitleDiv = document.createElement('div');
+                gameTitleDiv.classList.add('game-title-container');
+        
                 const gameTitle = document.createElement('h3');
                 gameTitle.textContent = game.game_name; // Use the 'game_name' field
-                gameDiv.appendChild(gameTitle);
-
+                gameTitleDiv.appendChild(gameTitle);
+        
+                // Dropdown Button
+                const dropdownButton = document.createElement('button');
+                dropdownButton.textContent = '▼';
+                dropdownButton.classList.add('dropdown-button');
+                gameTitleDiv.appendChild(dropdownButton);
+        
+                gameDiv.appendChild(gameTitleDiv);
+        
+                // Game Details (hidden by default)
+                const gameDetailsDiv = document.createElement('div');
+                gameDetailsDiv.classList.add('game-details');
+                gameDetailsDiv.style.display = 'none'; // Initially hidden
+        
                 // Add rating
                 const gameRating = document.createElement('p');
                 gameRating.textContent = `Rating: ${game.rating ? game.rating.toFixed(2) : 'N/A'} (${game.rating_count || 0} ratings)`;
-                gameDiv.appendChild(gameRating);
-
+                gameDetailsDiv.appendChild(gameRating);
+        
                 // Add cover image if available
                 if (game.cover && game.cover[0]) {
                     const gameImage = document.createElement('img');
                     gameImage.src = `https://images.igdb.com/igdb/image/upload/t_cover_big/${game.cover[0]}.jpg`;
                     gameImage.alt = game.game_name;
-                    gameDiv.appendChild(gameImage);
+                    gameDetailsDiv.appendChild(gameImage);
                 }
-
+        
                 // Display genres
                 const genresList = document.createElement('p');
                 genresList.textContent = `Genres: ${game.genres ? game.genres.map(genre => genre[0]).join(', ') : 'N/A'}`;
-                gameDiv.appendChild(genresList);
-
+                gameDetailsDiv.appendChild(genresList);
+        
                 // Display platforms
                 const platformsList = document.createElement('p');
                 platformsList.textContent = `Platforms: ${game.game_platforms ? game.game_platforms.map(platform => platform[0]).join(', ') : 'N/A'}`;
-                gameDiv.appendChild(platformsList);
-
+                gameDetailsDiv.appendChild(platformsList);
+        
                 // Completion time if available
                 if (game.completion_time && game.completion_time > 0) {
                     const completionTime = document.createElement('p');
                     completionTime.textContent = `Completion time: ${game.completion_time} minutes`;
-                    gameDiv.appendChild(completionTime);
+                    gameDetailsDiv.appendChild(completionTime);
                 }
-
+        
+                gameDiv.appendChild(gameDetailsDiv);
                 savedGameListDiv.appendChild(gameDiv);
+        
+                // Toggle visibility of game details on button click
+                dropdownButton.addEventListener('click', () => {
+                    if (gameDetailsDiv.style.display === 'none') {
+                        gameDetailsDiv.style.display = 'block';
+                        dropdownButton.textContent = '▲'; // Change to '▲' when expanded
+                    } else {
+                        gameDetailsDiv.style.display = 'none';
+                        dropdownButton.textContent = '▼'; // Change to '▼' when collapsed
+                    }
+                });
             });
         }
+        
 
         fetchAllGames(); // Fetch the games when the page loads
     }
