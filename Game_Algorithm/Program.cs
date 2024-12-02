@@ -14,7 +14,7 @@ namespace Algorithm_Test
             {
                 List<Game> gameList = new List<Game>();
 
-                string jsonFilePath = "..\\..\\..\\UserGameListData.json"; // File path
+                string jsonFilePath = "Game_Algorithm/bin/publish/UserGameListData.json"; // File path
                 string jsonData = File.ReadAllText(jsonFilePath);
                 JsonDocument jsonDocument = JsonDocument.Parse(jsonData);
 

@@ -3,9 +3,10 @@ import requests
 
 input = "Wii Fit"
 
-url = "http://127.0.0.1:8000/delete-game"  # Update with your API's URL
-data = {"user_id": 1,
-        "game_name": "Borderlands 2"}
+url = "http://127.0.0.1:8000/sort-games"  # Update with your API's URL
+data = {"availability": 100,
+        "algorithm": 0,
+        "user_id": 1}
 
 response = requests.post(url, json=data)
 print(response.json())
