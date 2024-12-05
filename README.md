@@ -31,6 +31,23 @@ Open the webpage located at: `Web_Application/public/index.html`
 
 ## Tools & APIs
 [IGDB API](https://api-docs.igdb.com/#getting-started)
+### Python Libaries
+- requests
+- sqlite3
+- ast
+- fastapi
+- pydantic
+- starlette
+- uvicorn
+- os
+- subprocess
+- json
+### Node Libraries
+- cors
+- express
+- node-fetch
+    
+
 `Add Other Libraries`
 
 ## Contributors
