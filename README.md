@@ -16,7 +16,7 @@ Install Python Prereqs: `pip install requests ast fastapi pydantic starlette uvi
 
 Note: This should be all of the packages that need to be installed that are not bundled with Python by default.
 
-Install Node Prereqs: `npm install express cors node-fetch`
+Install Node Prereqs (if needed, may already be attached in this repository): `npm install express cors node-fetch`
 
 ## How to use
 From the project root:
