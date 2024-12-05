@@ -18,7 +18,7 @@ Note: This should be all of the packages that need to be installed that are not 
 
 Install Node Prereqs (if needed, may already be attached in this repository): `npm install express cors node-fetch`
 
-Install the .NET runtime on your system (Note: do to our implementation, if the Python is ran within a virtual environment, it will not successfully run the algorithms).
+Install the .NET runtime on your system (algorithms were compliled with 6.0.0).
 ## How to use
 From the project root:
 Start the web server:
