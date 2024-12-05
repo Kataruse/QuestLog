@@ -12,6 +12,12 @@ A project assigned to us by Matthew Harrison that must address atleast on of the
 ## How to install
 Download the repository and extract.
 
+Install Python Prereqs: `pip install requests ast fastapi pydantic starlette uvicorn`
+
+Note: This should be all of the packages that need to be installed that are not bundled with Python by default.
+
+Install Node Prereqs: `npm install express cors node-fetch`
+
 ## How to use
 From the project root:
 Start the web server:
