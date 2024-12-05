@@ -12,6 +12,13 @@ A project assigned to us by Matthew Harrison that must address atleast on of the
 ## How to install
 Download the repository and extract.
 
+Install Python Prereqs: `pip install requests fastapi pydantic starlette uvicorn`
+
+Note: This should be all of the packages that need to be installed that are not bundled with Python by default.
+
+Install Node Prereqs (if needed, may already be attached in this repository): `npm install express cors node-fetch`
+
+Install the .NET runtime on your system (algorithms were compliled with 6.0.0).
 ## How to use
 From the project root:
 Start the web server:
@@ -25,6 +32,23 @@ Open the webpage located at: `Web_Application/public/index.html`
 
 ## Tools & APIs
 [IGDB API](https://api-docs.igdb.com/#getting-started)
+### Python Libaries
+- requests
+- sqlite3
+- ast
+- fastapi
+- pydantic
+- starlette
+- uvicorn
+- os
+- subprocess
+- json
+### Node Libraries
+- cors
+- express
+- node-fetch
+    
+
 `Add Other Libraries`
 
 ## Contributors
