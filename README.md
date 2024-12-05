@@ -49,8 +49,6 @@ Open the webpage located at: `Web_Application/public/index.html`
 - node-fetch
     
 
-`Add Other Libraries`
-
 ## Contributors
 [Nicholas Crump](https://github.com/Kataruse)
 
